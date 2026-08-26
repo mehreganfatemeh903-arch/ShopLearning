@@ -1,4 +1,4 @@
-{% extends 'dashboard_user/base/base_dashboard_user.html' %}
+﻿{% extends 'dashboard_user/base/base_dashboard_user.html' %}
 
 {% block app-content %}
 <div class="card">
@@ -23,7 +23,7 @@
                     <tr>
                         <td>{{ order.id }}</td>
                         <td>{{ order.total_price }}</td>
-                        <td>{{ order.created_at|date:"Y/m/d" }}</td>
+                        <td>{{ order.created_at|date:"Y-m-d" }}</td>
                         <td>{{ order.get_status }}</td>
                         <td>
                             {% if order.is_paid %}

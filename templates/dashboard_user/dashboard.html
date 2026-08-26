@@ -1,4 +1,4 @@
-{% extends "dashboard_user/base/base_dashboard_user.html" %}
+﻿{% extends "dashboard_user/base/base_dashboard_user.html" %}
 
 {% block title %}
 Dashboard Admin
@@ -52,7 +52,7 @@ Dashboard Admin
 
             <div class="info-box-content">
                 <span class="info-box-text">Date join</span>
-                  <span class="info-box-number">{{ date_join|date:"Y/m/d" }}</span>
+                  <span class="info-box-number">{{ date_join|date:"Y-m-d" }}</span>
             </div>
             <!-- /.info-box-content -->
         </div>
@@ -115,5 +115,6 @@ Dashboard Admin
         <!-- /.card-footer -->
     </div>
     {% endblock %}
+
 
 

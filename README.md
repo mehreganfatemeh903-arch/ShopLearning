@@ -1,6 +1,6 @@
 ﻿# ShopLearning
 
-A complete Django-based e-commerce web application.
+A complete Django-based e-commerce web application built with Python and Django.
 
 ## Features
 
@@ -21,11 +21,12 @@ A complete Django-based e-commerce web application.
 - Contact and site settings
 - Responsive RTL interface
 - Static files and product images
+- Automated Django tests
 
 ## Technologies
 
-- Python
-- Django
+- Python 3
+- Django 6
 - SQLite
 - HTML5
 - CSS3
@@ -49,5 +50,5 @@ ShopLearning/
 ├── templates/
 ├── manage.py
 ├── requirements.txt
+├── README.md
 └── .gitignore
-
