@@ -1,0 +1,48 @@
+{% extends "dashboard_user/base/base_dashboard_user.html" %}
+
+{% block app-content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <h3 class="card-title">My Addresses</h3>
+        <a href="{% url 'address_add_user' %}" class="btn btn-sm btn-primary">+ Add Address</a>
+    </div>
+    <div class="card-body p-0">
+        <table class="table m-0">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Province</th>
+                    <th>City</th>
+                    <th>Postal Code</th>
+                    <th>Default</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for address in addresses %}
+                <tr>
+                    <td>{{ address.title }}</td>
+                    <td>{{ address.province }}</td>
+                    <td>{{ address.city }}</td>
+                    <td>{{ address.postal_code }}</td>
+                    <td>
+                        {% if address.is_default %}
+                            <span class="badge text-bg-success">Default</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'address_delete_user' address.pk %}"
+                           class="btn btn-sm btn-danger"
+                           onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No addresses yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

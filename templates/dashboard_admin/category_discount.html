@@ -1,0 +1,181 @@
+{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+
+{% block app-content %}
+
+<div class="container-fluid px-4 py-4">
+
+    <div class="d-flex align-items-center mb-4">
+        <h4 style="font-weight:700;margin:0;">Category Discount Management</h4>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- FORM -->
+        <div class="col-12 col-lg-4">
+            <div class="card" style="border:none;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);height:100%;">
+                <div class="card-header" style="background:#0d6efd;color:#fff;border-radius:12px 12px 0 0;padding:14px 20px;">
+                    <h6 style="margin:0;font-weight:600;">
+                        {% if forms.instance.pk %}Edit Discount{% else %}Add New Discount{% endif %}
+                    </h6>
+                </div>
+                <div class="card-body" style="padding:24px;">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="category" style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Category</label>
+                            <select class="form-control" id="category" name="category" style="border-radius:8px;font-size:14px;">
+                                {% for cat in categories %}
+                                <option value="{{ cat.id }}"
+                                    {% if forms.instance.category_id == cat.id %}selected{% endif %}>
+                                    {{ cat.name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="discount_percentage" style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Discount Percentage (%)</label>
+                            <div class="input-group">
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    max="100"
+                                    class="form-control"
+                                    value="{{ forms.percentage.value|default_if_none:0 }}"
+                                    id="discount_percentage"
+                                    name="percentage"
+                                    placeholder="e.g. 25"
+                                    style="border-radius:8px 0 0 8px;font-size:14px;"
+                                >
+                                <span class="input-group-text" style="border-radius:0 8px 8px 0;font-size:14px;">%</span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="start_date" style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">Start Date</label>
+                            <input
+                                type="date"
+                                class="form-control"
+                                value="{{ forms.instance.start_date|date:'Y-m-d' }}"
+                                id="start_date"
+                                name="start_date"
+                                style="border-radius:8px;font-size:14px;"
+                            >
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="end_date" style="font-size:13px;font-weight:600;display:block;margin-bottom:6px;">End Date</label>
+                            <input
+                                type="date"
+                                class="form-control"
+                                value="{{ forms.instance.end_date|date:'Y-m-d' }}"
+                                id="end_date"
+                                name="end_date"
+                                style="border-radius:8px;font-size:14px;"
+                            >
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input
+                                    type="checkbox"
+                                    class="form-check-input"
+                                    id="is_active"
+                                    name="is_active"
+                                    {% if forms.is_active.value %}checked{% endif %}
+                                    style="width:18px;height:18px;cursor:pointer;"
+                                >
+                                <label class="form-check-label" for="is_active" style="font-size:13px;font-weight:600;margin-left:6px;">Active</label>
+                            </div>
+                        </div>
+
+                        <div style="display:flex;flex-direction:column;gap:8px;">
+                            <button type="submit" class="btn btn-success" style="border-radius:8px;font-weight:600;padding:10px;">
+                                Save
+                            </button>
+                            {% if forms.instance.pk %}
+                            <a href="{% url 'admin_dashboard:category_discounts' %}" class="btn btn-default" style="border-radius:8px;font-weight:600;padding:10px;text-align:center;border:1px solid #ccc;">
+                                Cancel
+                            </a>
+                            {% endif %}
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="col-12 col-lg-8">
+            <div class="card" style="border:none;border-radius:12px;box-shadow:0 2px 12px rgba(0,0,0,.08);">
+                <div class="card-header" style="background:#6c757d;color:#fff;border-radius:12px 12px 0 0;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;">
+                    <h6 style="margin:0;font-weight:600;">Existing Discounts</h6>
+                    <span style="background:#fff;color:#6c757d;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;">
+                        {{ categories_discount.count }} total
+                    </span>
+                </div>
+                <div class="card-body" style="padding:0;">
+                    <div class="table-responsive">
+                        <table class="table table-hover" style="margin:0;">
+                            <thead style="background:#f8f9fa;">
+                                <tr>
+                                    <th style="padding:14px 20px;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;">#</th>
+                                    <th style="padding:14px 8px;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;">Category</th>
+                                    <th style="padding:14px 8px;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;">Discount</th>
+                                    <th style="padding:14px 8px;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;">Start</th>
+                                    <th style="padding:14px 8px;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;">End</th>
+                                    <th style="padding:14px 8px;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;">Status</th>
+                                    <th style="padding:14px 20px 14px 8px;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;text-align:right;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for discount in categories_discount %}
+                                <tr>
+                                    <td style="padding:14px 20px;font-size:13px;color:#aaa;">{{ forloop.counter }}</td>
+                                    <td style="padding:14px 8px;font-size:14px;font-weight:600;">{{ discount.category.name }}</td>
+                                    <td style="padding:14px 8px;">
+                                        <span style="background:#fdecea;color:#c62828;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;">
+                                            {{ discount.discount_percentage }}% OFF
+                                        </span>
+                                    </td>
+                                    <td style="padding:14px 8px;font-size:13px;color:#888;">{{ discount.start_date }}</td>
+                                    <td style="padding:14px 8px;font-size:13px;color:#888;">{{ discount.end_date }}</td>
+                                    <td style="padding:14px 8px;">
+                                        {% if discount.is_active %}
+                                        <span style="background:#e8f5e9;color:#2e7d32;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;">Active</span>
+                                        {% else %}
+                                        <span style="background:#f5f5f5;color:#757575;font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="padding:14px 20px 14px 8px;text-align:right;">
+                                        <a href="?edit={{ discount.id }}" class="btn btn-warning btn-sm" style="border-radius:6px;font-size:12px;font-weight:600;margin-right:4px;">
+                                            Edit
+                                        </a>
+                                        <a href="{% url 'admin_dashboard:category_discount_delete' discount.id %}"
+                                           class="btn btn-danger btn-sm"
+                                           style="border-radius:6px;font-size:12px;font-weight:600;"
+                                           onclick="return confirm('Delete this discount?')">
+                                            Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="7" style="text-align:center;padding:40px;color:#aaa;font-size:14px;">
+                                        No discounts found. Add one using the form.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

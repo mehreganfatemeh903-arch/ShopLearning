@@ -1,0 +1,170 @@
+{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+{% load custom_filters_store %}
+{% block title %}
+List orders
+{% endblock %}
+
+{% block meta_data %}
+<meta name="title" content="Dashboard Admin"/>
+<meta name="author" content="javad"/>
+<meta name="description" content="Dashboard Admin 30 example pages using Vanilla js."/>
+<meta name="keywords" content="dashboard,adminlte"/>
+{% endblock %}
+
+{% block app-content %}
+<div class="card m-2">
+    <div class="card-footer">
+        <form action="#" method="post">
+            {% csrf_token %}
+            <div class="input-group gap-2">
+                <input type="text" name="message" placeholder="Type OrderID,MobileUse,EmailUser..." class="form-control"
+                       aria-label="Type Message ...">
+                <span class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">List Orders</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
+                <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-remove">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table m-0">
+                <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Mobile</th>
+                    <th>IsPaid</th>
+                    <th>TotalPrice</th>
+                    <th>CreatedAte</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+
+                    <td>
+                        {{ order.customer.user.first_name }}
+                        {{ order.customer.user.last_name }}
+                    </td>
+
+                    <td>
+                        {{ order.customer.phone }}
+                    </td>
+
+                    <td>
+                        {% if order.is_paid %}
+                        <span class="badge text-bg-success">Success Paid</span>
+                        {% else %}
+                        <span class="badge text-bg-danger">Fail Paid</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ order.total_price }}
+                    </td>
+
+                    <td>
+                        {{ order.created_at }}
+                    </td>
+                    <td>
+                        {{ order.status|show_status_order }}
+                    </td>
+
+                    <td>
+                        <a href="{% url 'admin_dashboard:order_detail' order.id %}" class="btn btn-outline-primary">
+                            Detail Order
+                        </a>
+                    </td>
+
+                    <td>
+                        <div>
+                            <form method="POST" action="{% url 'admin_dashboard:order_update_status' %}">
+                                {% csrf_token %}
+                                <label>
+                                    <select class="form-control m-1" name="status">
+                                        {% for key, value in choices %}
+                                        <option value="{{ key }}">{{ value }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="hidden" name="order_id" value="{{ order.id }}">
+                                    <button type="submit" class="btn btn-info m-1">
+                                        Update Status Order
+                                    </button>
+                                </label>
+                            </form>
+                        </div>
+                    </td>
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% if is_paginated %}
+    <div class="card-footer clearfix">
+        <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                        Previous
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+                {% endif %}
+
+                {% for num in paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                        Next
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

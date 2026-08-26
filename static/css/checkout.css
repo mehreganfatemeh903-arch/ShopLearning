@@ -1,0 +1,83 @@
+.checkout-page {
+    background: #f8f9fa;
+}
+
+.form-control-lg {
+    border-radius: 12px;
+}
+
+/* payment */
+.payment-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.payment-option:hover {
+    background: #f8f9fa;
+}
+
+/* summary */
+.sticky-summary {
+    position: sticky;
+    top: 90px;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+    .sticky-summary {
+        position: static;
+    }
+}
+/* ================= SHIPPING METHODS ================= */
+
+.shipping-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.shipping-option {
+    cursor: pointer;
+}
+
+.shipping-option input {
+    display: none;
+}
+
+.shipping-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 18px;
+    border: 2px solid #eee;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.shipping-card h6 {
+    font-weight: 600;
+}
+
+.shipping-card .price {
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+/* active state */
+.shipping-option input:checked + .shipping-card {
+    border-color: #0d6efd;
+    background: #f0f6ff;
+    box-shadow: 0 6px 15px rgba(13,110,253,0.15);
+}
+
+/* hover */
+.shipping-card:hover {
+    border-color: #0d6efd;
+}

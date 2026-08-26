@@ -1,0 +1,72 @@
+/* 🔹 Slider */
+.slider-img {
+    height: 420px;
+    object-fit: cover;
+    border-radius: 14px;
+}
+
+/* 🔹 Filter Box */
+.filter-box {
+    position: sticky;
+    top: 90px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+/* Range */
+.price-range {
+    width: 100%;
+}
+
+/* 🔹 Product Card */
+.product-card {
+    background: #fff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    transition: 0.35s;
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+}
+
+.product-card img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+}
+
+/* Discount */
+.discount-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #e63946;
+    color: #fff;
+    padding: 6px 14px;
+    font-size: 13px;
+    border-radius: 20px;
+}
+
+/* Price */
+.price-box {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+}
+
+.old-price {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 14px;
+}
+
+.new-price {
+    color: #2a9d8f;
+    font-size: 18px;
+    font-weight: bold;
+}

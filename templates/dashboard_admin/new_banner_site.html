@@ -1,0 +1,350 @@
+{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+
+{% block title %}
+Banner Management
+{% endblock %}
+
+{% block meta_data %}
+<meta name="title" content="Dashboard Admin"/>
+<meta name="author" content="javad"/>
+<meta name="description" content="Dashboard Admin 30 example pages using Vanilla js."/>
+<meta name="keywords" content="dashboard,adminlte"/>
+{% endblock %}
+
+{% block app-content %}
+
+<!-- Banner Slider -->
+<div class="banner-slider" role="region" aria-label="Site Banners">
+    <div style="overflow: hidden;">
+        <div class="banner-track">
+            {% for banner in banners %}
+            {% if banner.is_active %}
+            <div class="banner-slide {% if banner.is_cover %}is-cover{% endif %}">
+                <img src="{{ banner.picture.url }}"
+                     alt="{{ banner.title }}"
+                     loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+                <div class="caption">
+                    <h2>{{ banner.title }}</h2>
+                    <p>{{ banner.description }}</p>
+                    {% if banner.is_cover %}
+                    <span class="badge-cover">Featured</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <button class="prev nav-btn" aria-label="Previous">&#8249;</button>
+    <button class="next nav-btn" aria-label="Next">&#8250;</button>
+    <div class="dots" role="tablist" aria-label="Select Banner"></div>
+</div>
+
+<!-- Banner Form -->
+<div class="card card-primary card-outline mb-4 mt-4">
+    <div class="card-header">
+        <div class="card-title">Add Banner</div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card-body">
+
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" name="title">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <input type="text" class="form-control" name="description">
+            </div>
+
+            <div class="input-group mb-3">
+                <label class="input-group-text">Upload</label>
+                <input type="file" name="picture" class="form-control">
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" name="is_cover" id="is_cover">
+                <label class="form-check-label" for="is_cover">Set as Cover</label>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" name="is_active" id="is_active" checked>
+                <label class="form-check-label" for="is_active">Active</label>
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+
+<!-- Banner List -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">List Banners</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
+                <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-remove">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table m-0">
+                <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Cover</th>
+                    <th>Active</th>
+                    <th>Picture</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in banners %}
+                <tr>
+                    <td>{{ i.title }}</td>
+                    <td>{{ i.description }}</td>
+                    <td>
+                        {% if i.is_cover %}
+                        <span class="badge bg-primary">Cover</span>
+                        {% else %}-{% endif %}
+                    </td>
+                    <td>
+                        {% if i.is_active %}
+                        <span class="badge bg-success">Active</span>
+                        {% else %}
+                        <span class="badge bg-secondary">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if i.picture %}
+                        <a href="{{ i.picture.url }}" target="_blank">Show</a>
+                        {% else %}-{% endif %}
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-outline-danger"
+                           href="{% url 'admin_dashboard:banner_delete' i.id %}">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if is_paginated %}
+    <div class="card-footer clearfix">
+        <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+                {% endif %}
+
+                {% for num in paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Slider CSS -->
+<style>
+.banner-slider {
+    position: relative;
+    width: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #111;
+}
+.banner-track {
+    display: flex;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.banner-slide {
+    min-width: 100%;
+    position: relative;
+    height: 420px;
+    overflow: hidden;
+}
+.banner-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.banner-slide::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top,
+        rgba(0,0,0,0.72) 0%,
+        rgba(0,0,0,0.15) 55%,
+        transparent 100%
+    );
+}
+.banner-slide.is-cover::after {
+    background: linear-gradient(135deg,
+        rgba(83,74,183,0.88) 0%,
+        rgba(24,95,165,0.55) 55%,
+        transparent 100%
+    );
+}
+.caption {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    z-index: 2;
+    color: #fff;
+}
+.caption h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin: 0 0 6px;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+.caption p {
+    font-size: 0.95rem;
+    opacity: 0.88;
+    margin: 0 0 10px;
+}
+.badge-cover {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.38);
+    color: #fff;
+    padding: 3px 14px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    backdrop-filter: blur(4px);
+}
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.28); }
+.nav-btn.prev { left: 1rem; }
+.nav-btn.next { right: 1rem; }
+.dots {
+    position: absolute;
+    bottom: 1rem;
+    right: 1.25rem;
+    z-index: 4;
+    display: flex;
+    gap: 6px;
+}
+.dots .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+    padding: 0;
+}
+.dots .dot.active {
+    background: #fff;
+    transform: scale(1.25);
+}
+</style>
+
+<!-- Slider JS -->
+<script>
+class BannerSlider {
+    constructor(el) {
+        this.el = el;
+        this.track = el.querySelector('.banner-track');
+        this.slides = el.querySelectorAll('.banner-slide');
+        this.cur = 0;
+        this.total = this.slides.length;
+        this.autoplay = null;
+        if (this.total > 0) this.init();
+    }
+    init() {
+        this.buildDots();
+        this.bindNav();
+        this.startAutoplay();
+        this.el.addEventListener('mouseenter', () => clearInterval(this.autoplay));
+        this.el.addEventListener('mouseleave', () => this.startAutoplay());
+    }
+    go(n) {
+        this.cur = (n + this.total) % this.total;
+        this.track.style.transform = `translateX(-${this.cur * 100}%)`;
+        this.el.querySelectorAll('.dot').forEach((d, i) =>
+            d.classList.toggle('active', i === this.cur)
+        );
+    }
+    buildDots() {
+        const wrap = this.el.querySelector('.dots');
+        this.slides.forEach((_, i) => {
+            const d = document.createElement('button');
+            d.className = 'dot' + (i === 0 ? ' active' : '');
+            d.setAttribute('aria-label', `Banner ${i + 1}`);
+            d.onclick = () => this.go(i);
+            wrap.appendChild(d);
+        });
+    }
+    bindNav() {
+        this.el.querySelector('.prev')?.addEventListener('click', () => this.go(this.cur - 1));
+        this.el.querySelector('.next')?.addEventListener('click', () => this.go(this.cur + 1));
+    }
+    startAutoplay() {
+        this.autoplay = setInterval(() => this.go(this.cur + 1), 4000);
+    }
+}
+
+document.querySelectorAll('.banner-slider').forEach(el => new BannerSlider(el));
+</script>
+
+{% endblock %}

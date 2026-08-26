@@ -1,0 +1,62 @@
+{% extends 'dashboard_user/base/base_dashboard_user.html' %}
+
+{% block app-content %}
+<div class="card" style="max-width:600px; margin: 30px auto;">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title">
+            <i class="bi bi-plus-circle me-2"></i>Add New Address
+        </h3>
+    </div>
+    <div class="card-body">
+
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label fw-bold">Title</label>
+                <input type="text" name="title" class="form-control"
+                       value="{{ data.title|default:'' }}"
+                       placeholder="e.g. Home, Work" required>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">Province</label>
+                    <input type="text" name="province" class="form-control"
+                           value="{{ data.province|default:'' }}"
+                           placeholder="e.g. Tehran" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label fw-bold">City</label>
+                    <input type="text" name="city" class="form-control"
+                           value="{{ data.city|default:'' }}"
+                           placeholder="e.g. Tehran" required>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Full Address</label>
+                <textarea name="street" class="form-control" rows="3"
+                          placeholder="Street, Alley, Building..." required>{{ data.street|default:'' }}</textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label fw-bold">Postal Code</label>
+                <input type="text" name="postal_code" class="form-control"
+                       value="{{ data.postal_code|default:'' }}"
+                       placeholder="10 digit postal code" maxlength="10" required>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="is_default" class="form-check-input" id="isDefault">
+                <label class="form-check-label" for="isDefault">Set as default address</label>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save me-1"></i>Save Address
+                </button>
+                <a href="{% url 'address_list_user' %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

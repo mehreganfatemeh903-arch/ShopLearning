@@ -1,0 +1,124 @@
+{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+{% load static %}
+{% load custom_filters_admin %}
+
+{% block title %}Invoice{% endblock %}
+
+{% block custom_css %}
+<link href="{% static 'css/dashboard/admin/order_detail.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block app-content %}
+<div class="invoice-container">
+
+    <!-- Header فروشگاه -->
+    <div class="invoice-header">
+        <img src="{% static 'images/adminlte/logo.png' %}" alt="Logo" class="invoice-logo">
+        <h1>INVOICE</h1>
+        <p class="store-info">Your Company Name | 1234 Street, City, Country | info@company.com | +123 456 7890</p>
+    </div>
+
+    <!-- اطلاعات مشتری و فاکتور -->
+    <div class="invoice-customer">
+        <div class="customer-left">
+            <h3>Billed To:</h3>
+            <p>{{ order.customer.user.first_name }} {{ order.customer.user.last_name }}</p>
+            <p><strong>Customer Phone:</strong> {{ order.customer.phone }}</p>
+            <p><strong>Email:</strong> {{ order.customer.user.email }}</p>
+        </div>
+        <div class="customer-right">
+            <p><strong>Invoice Number:</strong> {{ order.id }}</p>
+            <p><strong>Invoice Date:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</p>
+            <p><strong>Status:</strong>
+                {% if order.is_paid %}
+                <span class="badge paid">Paid</span>
+                {% else %}
+                <span class="badge not-paid">Not Paid</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- جدول محصولات -->
+    <table class="invoice-table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in order_details %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>${{ item.price }}</td>
+            <td>{{ item.price|multiply:item.quantity }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th colspan="4" class="text-end">Grand Total</th>
+            <th>${{ order.total_price }}</th>
+        </tr>
+        </tfoot>
+    </table>
+
+    <div class="card-footer clearfix">
+        <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+                {% if is_paginated %}
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">
+                        Previous
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+                {% endif %}
+
+                {% for num in paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">
+                        Next
+                    </a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+
+    <!-- فوتر و دکمه چاپ -->
+    <div class="invoice-footer text-center mt-3">
+        <p>Thank you for your business!</p>
+        <button onclick="window.print()" class="btn btn-print">Print Invoice</button>
+    </div>
+</div>
+{% endblock %}

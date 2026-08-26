@@ -1,0 +1,136 @@
+{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+
+{% block title %}
+List Users
+{% endblock %}
+
+{% block meta_data %}
+<meta name="title" content="Dashboard Admin"/>
+<meta name="author" content="javad"/>
+<meta name="description" content="Dashboard Admin 30 example pages using Vanilla js."/>
+<meta name="keywords" content="dashboard,adminlte"/>
+{% endblock %}
+
+{% block app-content %}
+<div class="card m-2">
+    <div class="card-footer">
+        <form action="#" method="post">
+            <div class="input-group gap-2">
+                <input type="text" name="message" placeholder="Type Mobile,Username,Email,Name..." class="form-control"
+                       aria-label="Type Message ...">
+                <span class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">List Users</h3>
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
+                <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+            </button>
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-remove">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table m-0">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>FirstName</th>
+                    <th>LastName</th>
+                    <th>Mobile</th>
+                    <th>Email</th>
+                    <th>Active</th>
+                    <th>SuperUser</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        {{ user.id }}
+                    </td>
+                    <td>
+                        {{ user.first_name }}
+                    </td>
+                    <td>
+                        {{ user.last_name }}
+                    </td>
+                    <td>
+                        {{ user.phone_number }}
+                    </td>
+                    <td>
+                        {{ user.email }}
+                    </td>
+                    <td>
+                        {% if user.is_active %}
+                        <span class="badge text-bg-success">Active</span>
+                        {% else %}
+                        <span class="badge text-bg-danger">NotActive</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if user.is_superuser %}
+                        <span class="badge text-bg-success">SuperUser</span>
+                        {% else %}
+                        <span class="badge text-bg-info">User</span>
+                        {% endif %}
+                    </td>
+
+
+                    <td>Call of Duty IV</td>
+                    <td>
+                        <span class="badge text-bg-success">Shipped</span>
+                    </td>
+                    <td>
+                        <!-- Actions buttons here -->
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card-footer clearfix">
+        <div class="d-flex justify-content-center mt-4">
+            <div class="btn-group pagination-modern" role="group">
+                {% if user.is_paginated %}
+                {% if page_obj.has_previous %}
+                <div class="page-item"><a class="page-link" href="?page={{page_obj.previous_page_number}}">Previous</a>
+                </div>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                <div class="page-item">
+                    <a class="page-link" href="?page={{num}}">{{num}}</a>
+                </div>
+                {% endfor %}
+                {% endif %}
+                {% if page_obj.has_next %}
+                <div class="page-item">
+                    <a class="page-link" href="?page={{pag_obj.next_page_number}}">Next</a>
+                </div>
+                {% endif %}
+
+<!--                <button type="button" class="btn btn-outline-secondary">«</button>-->
+<!--                <button type="button" class="btn btn-outline-secondary">1</button>-->
+<!--                <button type="button" class="btn btn-primary active">2</button>-->
+<!--                <button type="button" class="btn btn-outline-secondary">3</button>-->
+<!--                <button type="button" class="btn btn-outline-secondary">4</button>-->
+<!--                <button type="button" class="btn btn-outline-secondary">»</button>-->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

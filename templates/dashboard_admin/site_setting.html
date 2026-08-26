@@ -1,0 +1,84 @@
+{% extends "dashboard_admin/base/base_dashboard_admin.html" %}
+
+{% block title %}
+SettingSite
+{% endblock %}
+
+{% block app-content %}
+
+{% if messages %}
+<div class="alert-container">
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="card mb-4">
+
+    <div class="row">
+
+        <div class="col-md-6 text-center">
+            <h3 class="card-title">SiteSetting</h3>
+        </div>
+
+        <div class="col-md-6">
+            <a class="btn btn-outline-primary"
+               href="{% url 'admin_dashboard:settings_init' %}">
+                Create Default Setting Key Value
+            </a>
+        </div>
+
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="card-body p-0">
+            <table class="table table-sm">
+
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Key</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for i in settings %}
+                <tr class="align-middle">
+
+                    <td>{{ i.id }}</td>
+                    <td>{{ i.key }}</td>
+
+                    <td>
+                        <input class="form-control"
+                               type="text"
+                               name="settings[{{ i.id }}]"
+                               value="{{ i.value }}">
+                    </td>
+
+                </tr>
+                {% endfor %}
+
+                <tr>
+                    <td colspan="3">
+                        <button type="submit" class="btn btn-primary">
+                            Save
+                        </button>
+                    </td>
+                </tr>
+
+                </tbody>
+
+            </table>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

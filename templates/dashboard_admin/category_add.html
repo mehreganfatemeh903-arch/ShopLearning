@@ -1,0 +1,100 @@
+{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+
+{% block title %}
+List Users
+{% endblock %}
+
+{% block meta_data %}
+<meta name="title" content="Dashboard Admin"/>
+<meta name="author" content="javad"/>
+<meta name="description" content="Dashboard Admin 30 example pages using Vanilla js."/>
+<meta name="keywords" content="dashboard,adminlte"/>
+{% endblock %}
+
+{% block app-content %}
+
+<div class="card card-warning card-outline mb-4">
+    <!--begin::Header-->
+    <div class="card-header">
+        <div class="card-title">Add Category</div>
+    </div>
+    <!--end::Header-->
+
+    <!--begin::Form-->
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="card-body">
+
+            <!-- Name -->
+            <div class="row mb-3">
+                <label for="name" class="col-sm-2 col-form-label">Name</label>
+                <div class="col-sm-10">
+                    <input type="text" name="name" class="form-control"
+                           value="{{ forms.name.value|default_if_none:'' }}" id="name">
+                </div>
+            </div>
+
+            <!-- Slug -->
+            <div class="row mb-3">
+                <label for="slug" class="col-sm-2 col-form-label">Slug</label>
+                <div class="col-sm-10">
+                    <input type="text" name="slug" class="form-control"
+                           value="{{ forms.slug.value|default_if_none:'' }}" id="slug">
+                </div>
+            </div>
+
+            <!-- Image -->
+            <div class="row mb-3">
+                <label for="image" class="col-sm-2 col-form-label">Image</label>
+                <div class="col-sm-10">
+                    <input type="file" name="image" class="form-control" id="image">
+
+                    {% if forms.instance.image %}
+                    <div class="mt-2">
+                        <img src="{{ forms.instance.image.url }}" width="120" height="120">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Parent -->
+            <div class="row mb-3">
+                <label for="parent" class="col-sm-2 col-form-label">Parent</label>
+                <div class="col-sm-10">
+                    <select name="parent" id="parent" class="form-control">
+                        <option value="">No Parent</option>
+
+                        {% for item in all_category %}
+                        <option value="{{ item.id }}"
+                            {% if forms.parent.value|stringformat:"s" == item.id|stringformat:"s" %}selected{% endif %}>
+                            {{ item.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer">
+            <button type="submit" class="btn btn-warning">Submit Category</button>
+        </div>
+
+    </form>
+    <!--end::Form-->
+</div>
+
+<!-- Messages -->
+<div class="m-2">
+    {% if messages %}
+        <div class="alert alert-success" role="alert">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

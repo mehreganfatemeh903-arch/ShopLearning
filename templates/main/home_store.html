@@ -1,0 +1,171 @@
+{% extends 'main/base/base_main.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+Welcome to ShopLearning
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard/custom_main.css' %}">
+<link rel="stylesheet" href="{% static 'css/swiper-bundle.min.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        new Swiper('.categorySwiper', {
+            slidesPerView: 2,
+            spaceBetween: 20,
+            loop: false,
+            pagination: { el: '.swiper-pagination', clickable: true },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            breakpoints: {
+                576: { slidesPerView: 3 },
+                768: { slidesPerView: 4 },
+                992: { slidesPerView: 5 }
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+
+<!-- ================= HERO SLIDER ================= -->
+<div id="mainSlider" class="carousel slide mb-3" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        {% for item in banners %}
+        <button type="button" data-bs-target="#mainSlider"
+                data-bs-slide-to="{{ forloop.counter0 }}"
+                {% if forloop.first %}class="active" {% endif %}></button>
+        {% endfor %}
+    </div>
+    <div class="carousel-inner">
+        {% for item in banners %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}" style="position:relative;">
+            {% if item.picture %}
+            <img src="{{ item.picture.url }}" class="d-block w-100"
+                 style="height:500px;object-fit:cover;" alt="{{ item.title }}">
+            {% else %}
+            <img src="{% static 'images/store.png' %}" class="d-block w-100"
+                 style="height:500px;object-fit:cover;" alt="banner">
+            {% endif %}
+            {% if item.is_cover %}
+            <div style="position:absolute;top:0;left:0;width:100%;height:100%;
+                 background:linear-gradient(135deg,rgba(83,74,183,0.88),rgba(24,95,165,0.55),transparent);"></div>
+            {% else %}
+            <div style="position:absolute;top:0;left:0;width:100%;height:100%;
+                 background:linear-gradient(to top,rgba(0,0,0,0.7),rgba(0,0,0,0.1),transparent);"></div>
+            {% endif %}
+            <div style="position:absolute;bottom:60px;left:0;right:0;text-align:center;z-index:2;">
+                <h1 class="fw-bold text-white">{{ item.title }}</h1>
+                <p class="text-white">{{ item.description }}</p>
+                <a href="{% url 'store:products' %}"
+                   class="btn btn-warning btn-lg rounded-pill px-5 mt-2 fw-bold">Shop Now</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ================= SPECIAL PRODUCTS ================= -->
+<section class="featured_product py-4">
+    <div class="container">
+        <h2 class="text-center mb-4 fw-bold">Our Special Products</h2>
+        <div class="row g-4">
+            {% for item in specials %}
+            <div class="col-md-4">
+                <div class="card shadow border-0 h-100" style="border-radius:16px;overflow:hidden;">
+                    {% if item.product.image %}
+                    <img src="{{ item.product.image.url }}" class="card-img-top"
+                         style="height:220px;object-fit:cover;" alt="{{ item.product.name }}">
+                    {% else %}
+                    <img src="{% static 'images/store.png' %}" class="card-img-top"
+                         style="height:220px;object-fit:cover;" alt="product">
+                    {% endif %}
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold">{{ item.product.name }}</h5>
+                        <p class="text-muted">${{ item.product.price|intcomma }}</p>
+                        <a href="{% url 'store:add_to_cart' item.product.id %}"
+                           class="btn btn-outline-primary rounded-pill">Add To Cart</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center"><p>No special products found.</p></div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ================= CATEGORY ================= -->
+<section class="py-4 bg-light" dir="ltr">
+    <div class="container">
+        <h2 class="text-center fw-bold">Our Category</h2>
+        <p class="text-center text-muted mb-4">View our Category</p>
+
+        <div class="swiper categorySwiper" dir="ltr" style="padding: 10px;">
+            <div class="swiper-wrapper">
+                {% for item in category %}
+                <div class="swiper-slide">
+                    <div class="text-center"
+                         style="background:#fff;border-radius:16px;padding:20px 15px;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+                        <div class="category-icon-wrap">
+                            <img src="{% static 'icons/categories/' %}{{ item.slug }}.svg"
+                                 alt="{{ item.name }}"
+                                 onerror="this.src='{% static 'images/store.png' %}'">
+                        </div>
+                        <h6 class="fw-bold mb-3">{{ item.name }}</h6>
+                        <a href="{% url 'store:products' %}?category={{ item.id }}"
+                           class="btn btn-primary btn-sm rounded-pill px-3">Show Products</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="swiper-button-next" style="color:#0d6efd; top:45%;"></div>
+            <div class="swiper-button-prev" style="color:#0d6efd; top:45%;"></div>
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+    </div>
+</section>
+
+<!-- ================= CATEGORY DISCOUNT ================= -->
+{% if category_discount %}
+<section class="py-4">
+    <div class="container">
+        <h2 class="text-center mb-4 fw-bold">Special Discounts</h2>
+        <div class="row g-4">
+            {% for item in category_discount %}
+            <div class="col-md-4">
+                <div style="border-radius:16px;overflow:hidden;border:1px solid #eee;box-shadow:0 4px 16px rgba(0,0,0,.07);background:#fff;height:100%;">
+                    <div style="position:relative;">
+                        {% if item.category.image %}
+                        <img src="{{ item.category.image.url }}"
+                             style="width:100%;height:220px;object-fit:cover;"
+                             alt="{{ item.category.name }}">
+                        {% else %}
+                        <img src="{% static 'images/store.png' %}"
+                             style="width:100%;height:220px;object-fit:cover;" alt="discount">
+                        {% endif %}
+                        <span style="position:absolute;top:12px;left:12px;background:#e53935;color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;">
+                            {{ item.discount_percentage }}% OFF
+                        </span>
+                    </div>
+                    <div style="padding:16px 20px;text-align:center;">
+                        <h5 style="font-weight:700;margin:0 0 6px;">{{ item.category.name }}</h5>
+                        <p style="color:#888;font-size:13px;margin:0;">
+                            Special discount on all {{ item.category.name }} products
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}

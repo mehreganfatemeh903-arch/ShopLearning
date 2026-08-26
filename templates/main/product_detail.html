@@ -1,0 +1,230 @@
+{% extends 'main/base/base_main.html' %}
+{% load static %}
+{% load humanize %}
+{% load custom_filters_store %}
+
+{% block title %}Product Detail{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+<style>
+    .product-img { width: 100%; border-radius: 10px; }
+    .product-price { font-size: 1.8rem; font-weight: bold; color: #dc3545; }
+    .nav-tabs .nav-link.active {
+        font-weight: 600; color: #fff;
+        background-color: #007bff;
+        border-color: #007bff #007bff #fff;
+        border-radius: 5px 5px 0 0;
+    }
+    .tab-content {
+        border: 1px solid #dee2e6;
+        border-top: none;
+        padding: 20px;
+        border-radius: 0 0 10px 10px;
+    }
+    .reviews-container { margin-top: 20px; }
+    .review-card {
+        display: flex; gap: 15px; margin-bottom: 20px;
+        padding: 15px; border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        background-color: #fff;
+    }
+    .review-card img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; }
+    .review-form-container {
+        margin-top: 20px; padding: 20px;
+        border-radius: 12px; background-color: #f8f9fa;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .w-45 { width: 48%; }
+    .star-rating {
+        display: flex; flex-direction: row-reverse;
+        justify-content: center; font-size: 2rem; gap: 5px;
+    }
+    .star-rating input[type="radio"] { display: none; }
+    .star-rating label { color: #ddd; cursor: pointer; transition: color 0.3s; }
+    .star-rating input[type="radio"]:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label { color: #ffca08; }
+    @media(max-width:768px){
+        .d-flex.justify-content-between { flex-direction: column; gap: 10px; }
+        .w-45 { width: 100%; }
+        .review-card { flex-direction: column; align-items: center; text-align: center; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-{{ message.tags }} alert-dismissible fade show m-2" role="alert">
+    {{ message }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+{% endif %}
+<div class="product-detail-page" dir="ltr">
+
+    <!-- ================= PRODUCT INFO ================= -->
+    <div class="row bg-white p-3 rounded-3 m-1">
+        <div class="col-md-4 text-center">
+            {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-fluid rounded">
+            {% else %}
+            <img src="{% static 'images/store.png' %}" alt="No Image" class="img-fluid rounded">
+            {% endif %}
+        </div>
+        <div class="col-md-8">
+            <h1 class="product-title">{{ product.name }}</h1>
+            <p class="product-price">${{ product.price|intcomma }}</p>
+            {% if product.get_final_price < product.price %}
+            <p class="text-success fw-bold">
+                Discounted Price: ${{ product.get_final_price|intcomma }}
+            </p>
+            {% endif %}
+            <p class="product-description text-muted">{{ product.description }}</p>
+            <a href="{% url 'store:add_to_cart' product.id %}" class="btn btn-success btn-lg">
+                Add To Cart
+            </a>
+        </div>
+    </div>
+
+    <div class="container py-5">
+
+        <!-- ================= TABS ================= -->
+        <ul class="nav nav-tabs mb-3" id="productTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="additional-tab"
+                        data-bs-toggle="tab" data-bs-target="#additional"
+                        type="button">Additional Information
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="reviews-tab"
+                        data-bs-toggle="tab" data-bs-target="#reviews"
+                        type="button">Customer Reviews
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="productTabContent">
+
+            <!-- ================= ADDITIONAL INFORMATION ================= -->
+            <div class="tab-pane fade show active" id="additional" role="tabpanel">
+                <p>Here you can find more details, features and technical specifications of the product.</p>
+            </div>
+
+            <!-- ================= CUSTOMER REVIEWS ================= -->
+            <div class="tab-pane fade" id="reviews" role="tabpanel">
+
+                {% if request.user.is_authenticated %}
+                <div class="container text-center m-2">
+                    <button class="btn btn-primary add-review-btn">Add Your Review</button>
+                </div>
+
+                <!-- ================= ADD REVIEW FORM ================= -->
+                <div id="show-submit-form-review" class="review-form-container d-none">
+                    <form method="POST" action="{% url 'store:product_detail' product.id %}">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="reviewName" class="form-label">Your Name</label>
+                            <input type="text" id="reviewName"
+                                   class="form-control form-control-lg"
+                                   name="name" placeholder="Enter your name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reviewEmail" class="form-label">Your Email (Optional)</label>
+                            <input type="email" id="reviewEmail"
+                                   class="form-control form-control-lg"
+                                   name="email" placeholder="Enter your email">
+                        </div>
+
+                        <div class="mb-3 text-center">
+                            <label class="form-label d-block mb-2">Your Rating</label>
+                            <div class="star-rating">
+                                <input type="radio" id="star5" name="rating" value="5">
+                                <label for="star5" title="Excellent">★</label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4" title="Good">★</label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3" title="Average">★</label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2" title="Poor">★</label>
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1" title="Very Poor">★</label>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="reviewText" class="form-label">Your Review</label>
+                            <textarea name="description" id="reviewText" rows="5"
+                                      class="form-control form-control-lg"
+                                      placeholder="Write your review about this product..." required></textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="button"
+                                    class="btn btn-outline-secondary btn-lg w-45 cancel-review-btn">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn btn-primary btn-lg w-45">
+                                Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                {% else %}
+                <div class="container text-center m-2">
+                    <a href="{% url 'users:show_login' %}" class="btn btn-primary">
+                        Login to Write a Review
+                    </a>
+                </div>
+                {% endif %}
+
+                <hr>
+
+                <!-- ================= REVIEWS LIST ================= -->
+                <div class="reviews-container">
+                    {% for i in votes %}
+                    <div class="review-card">
+                        <img src="{% static 'images/store.png' %}" alt="{{ i.name }}">
+                        <div class="review-info">
+                            <strong>{{ i.name }}</strong>
+                            <span class="rating">{{ i.rating|rating_to_star }}</span>
+                            <p>{{ i.description }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted text-center">No reviews yet. Be the first to review!</p>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addBtn = document.querySelector('.add-review-btn');
+        const formContainer = document.getElementById('show-submit-form-review');
+        const cancelBtn = document.querySelector('.cancel-review-btn');
+
+        if (addBtn) {
+            addBtn.addEventListener('click', () => {
+                formContainer.classList.remove('d-none');
+                addBtn.classList.add('d-none');
+                formContainer.scrollIntoView({behavior: 'smooth'});
+            });
+
+            cancelBtn.addEventListener('click', () => {
+                formContainer.classList.add('d-none');
+                addBtn.classList.remove('d-none');
+            });
+        }
+    });
+</script>
+{% endblock %}

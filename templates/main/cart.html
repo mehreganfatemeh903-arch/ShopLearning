@@ -1,0 +1,231 @@
+{% extends 'main/base/base_main.html' %}
+{% load static %}
+
+{% block title %}Shopping Cart{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="cart-page py-5">
+
+    <div class="container">
+
+        <h2 class="fw-bold mb-4 text-center">
+            🛒 Your Cart
+        </h2>
+
+        <!-- ================= MESSAGES ================= -->
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-info">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <div class="row g-4">
+
+            <!-- ================= CART ITEMS ================= -->
+
+            <div class="col-lg-8">
+
+                <div class="card shadow-sm border-0">
+
+                    <div class="card-body">
+
+                        {% for item in cart_items %}
+
+                        <div class="cart-item d-flex align-items-center justify-content-between py-3 border-bottom">
+
+                            <!-- Product Info -->
+
+                            <div class="d-flex align-items-center gap-3">
+
+                                {% if item.product.image %}
+                                <img
+                                        src="{{ item.product.image.url }}"
+                                        alt="{{ item.product.name }}"
+                                        class="cart_item_img"
+                                        width="100"
+                                >
+                                {% else %}
+                                <img
+                                        src="{% static 'images/store.png' %}"
+                                        alt="Product Image"
+                                        class="cart_item_img"
+                                        width="100"
+                                >
+                                {% endif %}
+
+                                <div>
+
+                                    <h5 class="mb-2">
+                                        {{ item.product.name }}
+                                    </h5>
+
+                                    <p class="mb-1">
+                                        Price:
+                                        ${{ item.price_item }}
+                                    </p>
+
+                                    <p class="mb-2">
+                                        Quantity:
+                                        {{ item.quantity }}
+                                    </p>
+
+                                    <!-- Update Cart -->
+
+                                    <form
+                                            method="POST"
+                                            action="{% url 'store:update_cart' item.product.id %}"
+                                            class="d-flex gap-2"
+                                    >
+
+                                        {% csrf_token %}
+
+                                        <input
+                                                type="number"
+                                                class="form-control"
+                                                name="quantity"
+                                                value="{{ item.quantity }}"
+                                                min="1"
+                                                style="width: 100px;"
+                                        >
+
+                                        <button
+                                                type="submit"
+                                                class="btn btn-success"
+                                        >
+                                            Update
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Remove Button -->
+
+                            <div>
+
+                                <a
+                                        href="{% url 'store:remove_from_cart' item.id %}"
+                                        class="btn btn-danger"
+                                >
+                                    Remove
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                        {% empty %}
+
+                        <p class="text-center text-muted py-5">
+                            Your Cart Is Empty 🛒
+                        </p>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- ================= CART SUMMARY ================= -->
+
+            <div class="col-lg-4">
+
+                <div class="card shadow-sm border-0 cart-summary">
+
+                    <div class="card-body">
+
+                        <h5 class="fw-bold mb-3">
+                            Order Summary
+                        </h5>
+
+                        <!-- Discount Form -->
+
+                        <form
+                                method="POST"
+                                action="{% url 'store:apply_discount' %}"
+                                class="input-group mb-4"
+                        >
+
+                            {% csrf_token %}
+
+                            <input
+                                    type="text"
+                                    name="discount_code"
+                                    class="form-control"
+                                    placeholder="Enter discount code"
+                            >
+
+                            <button
+                                    type="submit"
+                                    class="btn btn-secondary"
+                            >
+                                Apply
+                            </button>
+
+                        </form>
+
+                        <!-- Summary -->
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>Total Items</span>
+
+                            <span>
+                                {{ cart_items|length }}
+                            </span>
+
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span>Total Price</span>
+
+                            <span>
+                                ${{ cart.get_total_price_cart }}
+                            </span>
+
+                        </div>
+
+                        <hr>
+
+                        <!-- Checkout -->
+
+                        <a
+                                href="{% url 'store:checkout' %}"
+                                class="btn btn-success w-100 mb-2"
+                        >
+                            Proceed to Checkout
+                        </a>
+
+                        <a
+                                href="{% url 'store:products' %}"
+                                class="btn btn-outline-secondary w-100"
+                        >
+                            Continue Shopping
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

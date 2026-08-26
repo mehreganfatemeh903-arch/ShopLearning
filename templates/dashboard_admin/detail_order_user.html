@@ -1,0 +1,176 @@
+{% extends 'dashboard_user/base/base_dashboard_user.html' %}
+{% load static %}
+{% load custom_filters_admin %}
+
+{% block title %}Order Detail{% endblock %}
+
+{% block custom_css %}
+<link href="{% static 'css/dashboard/admin/order_detail.css' %}" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+    .order-detail-wrapper {
+        background: #fff;
+        border-radius: 8px;
+        padding: 30px;
+        max-width: 900px;
+        margin: 0 auto;
+        font-family: 'Segoe UI', sans-serif;
+        color: #222;
+    }
+    .order-info p { margin: 6px 0; font-size: 15px; }
+    .order-info strong { color: #111; }
+
+    .items-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    .items-table thead tr { background: #1a73e8; color: #fff; }
+    .items-table thead th { padding: 12px 16px; font-weight: 600; font-size: 14px; text-align: left; }
+    .items-table tbody tr { border-bottom: 1px solid #eee; }
+    .items-table tbody td { padding: 12px 16px; font-size: 14px; vertical-align: middle; }
+    .items-table tfoot tr { background: #f5f5f5; font-weight: bold; }
+    .items-table tfoot td { padding: 12px 16px; font-size: 14px; }
+
+    .invoice-section-title {
+        background: #1a73e8; color: #fff;
+        padding: 10px 16px; font-size: 15px; font-weight: 600;
+        border-radius: 4px 4px 0 0; margin-top: 30px;
+    }
+    .invoice-table-wrapper {
+        border: 1px solid #ddd; border-top: none;
+        border-radius: 0 0 4px 4px; overflow: hidden;
+    }
+    .invoice-table { width: 100%; border-collapse: collapse; }
+    .invoice-table thead tr { background: #1a73e8; color: #fff; }
+    .invoice-table thead th { padding: 10px 16px; font-size: 13px; text-align: left; }
+    .invoice-table tbody tr { border-bottom: 1px solid #eee; }
+    .invoice-table tbody td { padding: 12px 16px; font-size: 13px; vertical-align: middle; }
+
+    .badge-invoice { background: #222; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; margin-right: 6px; font-family: monospace; }
+    .badge-amount { background: #444; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; margin-right: 6px; }
+    .badge-status-paid { background: #1a73e8; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; margin-right: 6px; }
+    .badge-status-unpaid { background: #e53935; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; }
+    .badge-date { background: #1a73e8; color: #fff; padding: 4px 10px; border-radius: 4px; font-size: 12px; }
+
+    .order-footer {
+        margin-top: 30px; text-align: center; color: #666;
+        font-size: 14px; padding-top: 20px; border-top: 1px solid #eee;
+    }
+    .btn-print {
+        background: #1a73e8; color: #fff; border: none;
+        padding: 10px 28px; border-radius: 6px; font-size: 14px;
+        cursor: pointer; margin-top: 10px; transition: background 0.2s;
+    }
+    .btn-print:hover { background: #1558b0; }
+</style>
+{% endblock %}
+
+{% block app-content %}
+<div class="order-detail-wrapper" id="content">
+     <div style="text-align:center; margin-bottom: 30px; border-bottom: 2px solid #1a73e8; padding-bottom: 20px;">
+        <img src="{% static 'images/adminlte/logo.png' %}" alt="Logo" width="60" style="margin-bottom: 10px;">
+        <h2 style="margin: 0; color: #1a73e8; font-weight: 700;">ONLINESHOP</h2>
+        <p style="margin: 5px 0 0; color: #666; font-size: 13px;">Official Invoice | info@onlineshop.com</p>
+        <h4 style="margin: 10px 0 0; letter-spacing: 3px; color: #333;">— INVOICE —</h4>
+    </div>
+
+    <div class="order-info">
+        <p><strong>Order Number:</strong> {{ order.id }}</p>
+        <p><strong>Order Date:</strong> {{ order.created_at }}</p>
+        <p><strong>Billed To:</strong> {{ order.customer.user.email }} - {{ order.customer.user.phone_number }}</p>
+        <p><strong>Customer Phone Number:</strong> {{ order.customer.user.phone_number }}</p>
+        <p><strong>Customer Address :</strong> {{ order.city.country }} {{ order.city.name }} - {{ order.address_line }}
+        </p>
+        <p><strong>Shipping method :</strong> {{ order.shipping_method.name }}</p>
+    </div>
+
+    <table class="items-table">
+        <thead>
+        <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in order_details %}
+        <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.price|multiply:item.quantity }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" style="text-align:center; color:#999;">No items found</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="invoice-section-title">Invoices This Order</div>
+    <div class="invoice-table-wrapper">
+        <table class="invoice-table">
+            <thead>
+            <tr>
+                <th>Invoice Number</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Payment Method</th>
+                <th>Date</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in inboxes %}
+            <tr>
+                <td><span class="badge-invoice">{{ item.invoice_number }}</span></td>
+                <td><span class="badge-amount">{{ item.amount }}</span></td>
+                <td>
+                    {% if item.status == 'paid' %}
+                    <span class="badge-status-paid">{{ item.status }}</span>
+                    {% else %}
+                    <span class="badge-status-unpaid">{{ item.status }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% for t in item.Transaction.all %}
+                    <span class="badge-invoice">{{ t.payment_method.name }}</span>
+                    {% endfor %}
+                </td>
+                <td><span class="badge-date">{{ item.created_at }}</span></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="color:#999; text-align:center;">No invoices found</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="order-footer">
+        <p>Thank you for your business!</p>
+        <button class="btn-print" id="download-btn">Print</button>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block customer_js %}
+<script>
+    document.getElementById('download-btn').addEventListener('click', async () => {
+        const content = document.getElementById('content');
+        try {
+            const canvas = await html2canvas(content, { scale: 1 });
+            const imgData = canvas.toDataURL('image/png');
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save('order-detail.pdf');
+        } catch (e) {
+            console.error('Error generating PDF:', e);
+        }
+    });
+</script>
+{% endblock %}

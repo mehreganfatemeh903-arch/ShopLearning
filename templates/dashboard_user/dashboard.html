@@ -1,0 +1,119 @@
+{% extends "dashboard_user/base/base_dashboard_user.html" %}
+
+{% block title %}
+Dashboard Admin
+{% endblock %}
+
+{% block meta_data %}
+<meta name="title" content="Dashboard Admin"/>
+<meta name="author" content="javad"/>
+<meta name="description" content="Dashboard Admin 30 example pages using Vanilla js."/>
+<meta name="keywords" content="dashboard,adminlte"/>
+{% endblock %}
+{% block app-content %}
+<div class="row">
+    <div class="col-12  col-md-4">
+        <div class="info-box">
+                  <span class="info-box-icon text-bg-primary shadow-sm">
+                    <i class="bi bi-gear-fill"></i>
+                  </span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Total Orders</span>
+                <span class="info-box-number">
+                     {{sum_order}}
+                </span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+
+    <div class="col-12  col-md-4">
+        <div class="info-box">
+                  <span class="info-box-icon text-bg-success shadow-sm">
+                    <i class="bi bi-cart-fill"></i>
+                  </span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Total Transaction</span>
+                <span class="info-box-number">{{transactions_sum}}</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="info-box">
+                  <span class="info-box-icon text-bg-warning shadow-sm">
+                    <i class="bi bi-people-fill"></i>
+                  </span>
+
+            <div class="info-box-content">
+                <span class="info-box-text">Date join</span>
+                  <span class="info-box-number">{{ date_join|date:"Y/m/d" }}</span>
+            </div>
+            <!-- /.info-box-content -->
+        </div>
+        <!-- /.info-box -->
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Latest Orders</h3>
+
+            <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
+                    <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                    <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+                </button>
+                <button type="button" class="btn btn-tool" data-lte-toggle="card-remove">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table m-0" role="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Order ID</th>
+                        <th scope="col">Total Price</th>
+                        <th scope="col">Paid</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for item in list_orders %}
+                    <tr>
+                        <td>
+                            <a href="pages/examples/invoice.html"
+                               class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{{item.id}}</a>
+                        </td>
+                        <td>{{item.total_price}}</td>
+                        <td>
+                            <span class="badge text-bg-success"> {{item.is_paid}} </span>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.table-responsive -->
+        </div>
+        <!-- /.card-body -->
+        <div class="card-footer clearfix">
+
+            <a href="{% url 'order_management_user' %}" class="btn btn-sm btn-secondary float-end">
+                View All Orders
+            </a>
+        </div>
+        <!-- /.card-footer -->
+    </div>
+    {% endblock %}
+
+

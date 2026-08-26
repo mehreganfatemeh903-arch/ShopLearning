@@ -1,0 +1,146 @@
+{% extends 'main/base/base_main.html' %}
+{% load static %}
+
+{% block title %}Products{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/products.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <div class="login-box">
+        <div class="card card-outline card-primary">
+            <div class="card-header">
+                <!-- ✅ فقط اینجا namespace اضافه شد -->
+                <a href="{% url 'store:home' %}"
+                   class="link-dark text-center link-offset-2 link-opacity-100 link-opacity-50-hover list-unstyled text-decoration-none">
+                    <h1 class="mb-0">
+                        ShopLearning
+                    </h1>
+                </a>
+            </div>
+
+            <div class="card-body login-card-body">
+                <p class="login-box-msg">Sign in to start your session</p>
+
+                <!-- ✅ فقط action اضافه شد برای جلوگیری از مشکل احتمالی -->
+                <form method="post" action="{% url 'users:show_login' %}">
+                    {% csrf_token %}
+
+
+                    <div class="input-group mb-1">
+                        <div class="form-floating">
+                            <input id="loginEmail" type="email" class="form-control" value="" name="email">
+                            <label for="loginEmail">Email</label>
+                        </div>
+                        <div class="input-group-text">
+                            <span class="bi bi-envelope"></span>
+                        </div>
+                    </div>
+
+                    <div class="input-group mb-1">
+                        <div class="form-floating">
+                            <input id="loginPassword" type="password" class="form-control" name="password">
+                            <label for="loginPassword">Password</label>
+                        </div>
+                        <div class="input-group-text">
+                            <span class="bi bi-lock-fill"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-8 d-inline-flex align-items-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault"> Remember Me </label>
+                            </div>
+                        </div>
+
+                        <div class="text-center mb-3">
+                            <a href="#" class="btn btn-danger">
+                                <i class="bi bi-google me-2"></i> Sign in using Google+
+                            </a>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="text-center mb-3">
+                                <button type="submit" class="btn btn-primary">Sign In</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                {% if messages %}
+                   {% for message in messages %}
+                        <div>
+                            <div class="alert alert-danger m-3" role="alert">
+                              {{ message }}
+                            </div>
+                        </div>
+                   {% endfor %}
+                {% endif %}
+
+                <hr>
+
+                <div class="text-center mb-3">
+                    <a href="#" class="btn btn-danger">
+                        <i class="bi bi-google me-2"></i> Sign in using Google+
+                    </a>
+                </div>
+
+                <p class="mb-2">
+                    <!-- ✅ namespace درست شد -->
+                    <a href="{% url 'users:show_register' %}"
+                       class="text-center btn btn-outline-success">
+                       Register a new membership
+                    </a>
+                </p>
+
+                <p class="mb-1">
+                    <!-- ❗ اگر forgot_password تعریف نکردی اینو موقتاً # بگذار -->
+                    <a href="{% url 'users:forget_password' %}" class="btn btn-outline-primary">
+                        I forgot my password
+                    </a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const toggleBtn = document.getElementById('mobile-filter-products');
+        const closeBtn = document.getElementById('close-filter');
+        const filterSection = document.getElementById('filter-section');
+
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', function () {
+                filterSection.classList.add('active');
+                toggleBtn.classList.add('d-none');
+            });
+        }
+
+        if (closeBtn) {
+            closeBtn.addEventListener('click', function () {
+                filterSection.classList.remove('active');
+                toggleBtn.classList.remove('d-none');
+            });
+        }
+
+        const priceRange = document.getElementById('priceRange');
+        const priceValue = document.getElementById('priceValue');
+
+        if (priceRange && priceValue) {
+            priceValue.innerText = Number(priceRange.value).toLocaleString();
+            priceRange.addEventListener('input', function () {
+                priceValue.innerText = Number(this.value).toLocaleString();
+            });
+        }
+    });
+</script>
+{% endblock %}

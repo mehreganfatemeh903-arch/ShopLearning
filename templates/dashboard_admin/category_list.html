@@ -1,0 +1,148 @@
+{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+
+{% block title %}
+List Users
+{% endblock %}
+
+{% block meta_data %}
+<meta name="title" content="Dashboard Admin"/>
+<meta name="author" content="javad"/>
+<meta name="description" content="Dashboard Admin 30 example pages using Vanilla js."/>
+<meta name="keywords" content="dashboard,adminlte"/>
+{% endblock %}
+
+{% block app-content %}
+
+<div class="card m-2">
+    <div class="card-footer">
+        <form action="#" method="post">
+            {% csrf_token %}
+            <div class="input-group gap-2">
+                <input type="text" name="message"
+                       placeholder="Type Mobile,Username,Email,Name..."
+                       class="form-control"
+                       aria-label="Type Message ...">
+
+                <span class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">List category</h3>
+
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
+                <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+            </button>
+
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-remove">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table m-0">
+
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Parent name</th>
+                    <th>Category name</th>
+                    <th>Category Slug</th>
+                    <th>Operate</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                {% for item in all_category %}
+                <tr>
+
+                    <td>
+                        <a href="#"
+                           class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">
+                            {{ item.id }}
+                        </a>
+                    </td>
+
+                    <td>
+                        {% if item.parent %}
+                            {{ item.parent.name }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+
+                    <td>{{ item.name }}</td>
+
+                    <td>
+                        <span class="badge text-bg-success">
+                            {{ item.slug }}
+                        </span>
+                    </td>
+
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-danger"
+                               href="{% url 'admin_dashboard:category_delete' item.id %}">
+                                Delete
+                            </a>
+
+                            <a class="btn btn-outline-primary"
+                               href="{% url 'admin_dashboard:category_edit' item.id %}">
+                                Edit
+                            </a>
+                        </div>
+                    </td>
+
+                </tr>
+                {% endfor %}
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+
+    {% if all_category.paginator.num_pages > 1 %}
+<div class="card-footer clearfix">
+    <div class="d-flex justify-content-center mt-2">
+        <div class="btn-group">
+
+            {% if all_category.has_previous %}
+                <a class="btn btn-outline-secondary btn-sm"
+                   href="?page={{ all_category.previous_page_number }}">«</a>
+            {% else %}
+                <button class="btn btn-outline-secondary btn-sm" disabled>«</button>
+            {% endif %}
+
+            {% for num in all_category.paginator.page_range %}
+                {% if all_category.number == num %}
+                    <a class="btn btn-primary btn-sm active" href="?page={{ num }}">{{ num }}</a>
+                {% else %}
+                    <a class="btn btn-outline-secondary btn-sm" href="?page={{ num }}">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if all_category.has_next %}
+                <a class="btn btn-outline-secondary btn-sm"
+                   href="?page={{ all_category.next_page_number }}">»</a>
+            {% else %}
+                <button class="btn btn-outline-secondary btn-sm" disabled>»</button>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endif %}
+
+</div>
+
+{% endblock %}

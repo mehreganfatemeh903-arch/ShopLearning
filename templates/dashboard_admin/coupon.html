@@ -1,0 +1,204 @@
+{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+
+
+{% block app-content %}
+
+<div class="container">
+    <div class="card-header bg-primary text-white">
+        <h3 class="card-title">Coupon Management</h3>
+    </div>
+
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="code">Coupon Code</label>
+                <input type="text"
+                       value="{{ forms.code.value|default_if_none:'' }}"
+                       class="form-control"
+                       name="code"
+                       id="code"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="percentage">Discount Percentage</label>
+                <input type="number"
+                       value="{{ forms.percentage.value|default_if_none:'' }}"
+                       class="form-control"
+                       name="percentage"
+                       id="percentage"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="start_date">Start Date</label>
+                <input type="date"
+                       value="{{ forms.start_date.value|default_if_none:'' }}"
+                       class="form-control"
+                       name="start_date"
+                       id="start_date"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="end_date">End Date</label>
+                <input type="date"
+                       value="{{ forms.end_date.value|default_if_none:'' }}"
+                       class="form-control"
+                       name="end_date"
+                       id="end_date"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="max_use">Max Use</label>
+                <input type="number"
+                       value="{{ forms.max_use.value|default_if_none:'' }}"
+                       class="form-control"
+                       name="max_use"
+                       id="max_use"
+                       required>
+            </div>
+
+            <div class="form-group">
+                <label for="time_use">Times Used</label>
+                <input type="number"
+                       value="{{ forms.time_use.value|default:0 }}"
+                       class="form-control"
+                       name="time_use"
+                       id="time_use"
+                       readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="is_active">Is Active</label>
+                <select class="form-control" name="is_active" id="is_active" required>
+
+                    <option value="True"
+                            {% if forms.is_active.value == True %}
+                            selected
+                            {% endif %}>
+                        Yes
+                    </option>
+
+                    <option value="False"
+                            {% if forms.is_active.value == False %}
+                            selected
+                            {% endif %}>
+                        No
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="is_general">Is General</label>
+
+                <select class="form-control"
+                        name="is_general"
+                        id="is_general">
+
+                    <option value="True"
+                            {% if forms.is_general.value == True %}
+                            selected
+                            {% endif %}>
+                        Yes
+                    </option>
+
+                    <option value="False"
+                            {% if forms.is_general.value == False %}
+                            selected
+                            {% endif %}>
+                        No
+                    </option>
+
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success m-2">
+                Save Coupon
+            </button>
+
+        </form>
+
+        <div class="card mt-4">
+
+            <div class="card-header bg-secondary text-white">
+                <h3 class="card-title">Coupon List</h3>
+            </div>
+
+            <div class="card-body">
+
+                <table class="table table-striped">
+
+                    <thead>
+                    <tr>
+                        <th>Coupon Code</th>
+                        <th>Discount (%)</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Max Use</th>
+                        <th>Times Used</th>
+                        <th>Is Active</th>
+                        <th>Is General</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for coupon in coupons %}
+                    <tr>
+
+                        <td>{{ coupon.code }}</td>
+                        <td>{{ coupon.percentage }}</td>
+                        <td>{{ coupon.start_date }}</td>
+                        <td>{{ coupon.end_date }}</td>
+                        <td>{{ coupon.max_use }}</td>
+                        <td>{{ coupon.times_use }}</td>
+
+                        <td>
+                            {% if coupon.is_active %}
+                            Yes
+                            {% else %}
+                            No
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if coupon.is_general %}
+                            Yes
+                            {% else %}
+                            No
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="?edit={{ coupon.id }}"
+                               class="btn btn-warning btn-sm">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'admin_dashboard:coupon_delete' coupon.id %}"
+                               class="btn btn-danger btn-sm">
+                                Delete
+                            </a>
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

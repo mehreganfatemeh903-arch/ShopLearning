@@ -1,0 +1,81 @@
+{% extends 'dashboard_user/base/base_dashboard_user.html' %}
+
+{% block app-content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Order Management</h3>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table m-0">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Total Price</th>
+                        <th>Created At</th>
+                        <th>Status</th>
+                        <th>Is Paid</th>
+                        <th>Detail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.total_price }}</td>
+                        <td>{{ order.created_at|date:"Y/m/d" }}</td>
+                        <td>{{ order.get_status }}</td>
+                        <td>
+                            {% if order.is_paid %}
+                                <span class="badge text-bg-success">Paid</span>
+                            {% else %}
+                                <span class="badge text-bg-danger">Not Paid</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'detail_order_show_user' order.id %}"
+                               class="btn btn-sm btn-outline-primary">Detail</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No orders found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {% if is_paginated %}
+    <div class="card-footer clearfix">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            {% for num in paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+        </ul>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

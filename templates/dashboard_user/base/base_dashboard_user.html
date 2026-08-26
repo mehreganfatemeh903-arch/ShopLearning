@@ -1,0 +1,194 @@
+{% load static %}
+
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ShopLearning | User Panel</title>
+
+    <link rel="stylesheet" href="{% static 'css/dashboard/adminlte.css' %}"/>
+    {% block custom_css %}{% endblock %}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css">
+
+    <style>
+        body { font-family: 'Tahoma', sans-serif; background-color: #f4f6f9; height: 100vh; overflow-x: hidden; }
+        .main-sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 250px; z-index: 1038; background-color: #343a40; }
+        .content-wrapper { margin-left: 250px; min-height: 100vh; transition: margin-left 0.3s ease-in-out; }
+        .navbar { position: fixed; top: 0; left: 250px; right: 0; z-index: 1039; }
+        .brand-text { font-weight: bold; color: white; }
+        .card-img-top { width: 50px; height: 50px; object-fit: cover; }
+        .nav-sidebar .nav-item > .nav-link { color: #c2c7d0; }
+        .nav-sidebar .nav-item > .nav-link:hover { background-color: #4b545c; color: white; }
+        .nav-sidebar .nav-item > .nav-link.active { background-color: #007bff; color: white; }
+        .main-content { margin-top: 70px; padding: 20px; }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <img src="{% static 'images/adminlte/logo.png' %}" alt="Logo" width="40" height="40"
+                     class="d-inline-block align-text-top">
+                User Panel
+            </a>
+        </div>
+    </nav>
+
+    <!-- Sidebar -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+        <div class="sidebar-brand d-flex align-items-center justify-content-center p-3">
+            <a href="{% url 'store:home' %}" class="text-decoration-none">
+                <img src="{% static 'images/adminlte/logo.png' %}" alt="ShopLearning" width="40"
+                     class="brand-image img-circle">
+                <span class="brand-text font-weight-light ml-2">ShopLearning</span>
+            </a>
+        </div>
+
+        <div class="sidebar">
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+
+                    <!-- Orders -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon bi bi-bag-check-fill"></i>
+                            <p>Orders <i class="right bi bi-chevron-right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'dashboard_user' %}" class="nav-link">
+                                    <i class="bi bi-circle nav-icon"></i>
+                                    <p>Dashboard</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'order_management_user' %}" class="nav-link">
+                                    <i class="bi bi-circle nav-icon"></i>
+                                    <p>Order Management</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'order_management_user' %}" class="nav-link">
+                                    <i class="bi bi-circle nav-icon"></i>
+                                    <p>View All Orders</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Comments -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon bi bi-chat-dots-fill"></i>
+                            <p>Comments <i class="right bi bi-chevron-right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'comment_list_user' %}" class="nav-link">
+                                    <i class="bi bi-circle nav-icon"></i>
+                                    <p>View All Comments</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Profile -->
+                    <li class="nav-item">
+                        <a href="{% url 'profile_user_show' %}" class="nav-link">
+                            <i class="nav-icon bi bi-person-fill"></i>
+                            <p>Profile</p>
+                        </a>
+                    </li>
+
+                    <!-- Settings -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon bi bi-gear-fill"></i>
+                            <p>Settings <i class="right bi bi-chevron-right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item px-2 py-1">
+                                <a href="{% url 'profile_user_show' %}" class="btn btn-secondary mb-1"
+                                   style="font-size:0.75rem; padding: 3px 10px;">Profile</a>
+                                <a href="{% url 'sign_out_user' %}" class="btn btn-danger"
+                                   style="font-size:0.75rem; padding: 3px 10px;">Sign Out</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <!-- Address -->
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon bi bi-house-fill"></i>
+                            <p>Address <i class="right bi bi-chevron-right"></i></p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{% url 'address_list_user' %}" class="nav-link">
+                                    <i class="bi bi-circle nav-icon"></i>
+                                    <p>Manage Address</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{% url 'address_add_user' %}" class="nav-link">
+                                    <i class="bi bi-circle nav-icon"></i>
+                                    <p>Add Address</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </nav>
+        </div>
+    </aside>
+
+    <!-- Content Wrapper -->
+    <div class="content-wrapper">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0">User Panel</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <main class="app_main">
+            <div class="container-fluid">{% block app-header %}{% endblock %}</div>
+            <div class="container-fluid">{% block app-content %}{% endblock %}</div>
+        </main>
+
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h3>Welcome to ShopLearning User Panel 🚀</h3>
+                                <p>Use the side menu to navigate between sections.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
+{% block customer_js %}{% endblock %}
+</body>
+</html>

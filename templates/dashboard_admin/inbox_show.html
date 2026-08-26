@@ -1,0 +1,108 @@
+{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+
+{% block title %}List Users{% endblock %}
+
+{% block meta_data %}
+<meta name="title" content="Dashboard Admin"/>
+<meta name="author" content="javad"/>
+<meta name="description" content="Dashboard Admin 30 example pages using Vanilla js."/>
+<meta name="keywords" content="dashboard,adminlte"/>
+{% endblock %}
+
+{% block app-content %}
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between">
+        <h3 class="card-title">Inbox Manager</h3>
+
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item">
+                <a class="page-link" href="#">«</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">1</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card-body p-0 table-responsive">
+
+        <table class="table table-striped mb-0">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Inbox</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for item in inboxes %}
+            <tr class="align-middle">
+
+                <!-- ID -->
+                <td>{{ item.id }}</td>
+
+                <!-- ACCORDION + BUTTON -->
+                <td>
+
+                    <div class="accordion" id="accordion-{{ item.id }}">
+                        <div class="accordion-item">
+
+                            <h2 class="accordion-header" id="heading-{{ item.id }}">
+                                <button class="accordion-button collapsed" type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#collapse-{{ item.id }}"
+                                        aria-expanded="false"
+                                        aria-controls="collapse-{{ item.id }}"
+                                         style="font-size:13px; padding:8px 12px;">
+
+                                    <span class="badge bg-dark m-1">
+                                        {{ item.name }}
+                                    </span>
+
+                                    <span class="badge bg-primary m-1">
+                                        {{ item.created_at }}
+                                    </span>
+
+                                </button>
+                            </h2>
+
+                            <div id="collapse-{{ item.id }}"
+                                 class="accordion-collapse collapse"
+                                 data-bs-parent="#accordion-{{ item.id }}">
+
+                                <div class="accordion-body">
+
+                                    <strong class="text-wrap-custom">
+                                        {{ item.transaction }}
+                                    </strong>
+
+                                    <div class="invoice-info mt-2">
+                                        <p><strong>Order Number: </strong> {{ item.id }}</p>
+                                        <p><strong>Order Date: </strong> {{ item.created_at }}</p>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Seen Button -->
+                    <a href="{% url 'admin_dashboard:message_seen' item.id %}"
+                       class="btn btn-secondary btn-sm mt-2">
+                        Seen
+                    </a>
+
+                </td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+{% endblock %}

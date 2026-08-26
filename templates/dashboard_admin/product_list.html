@@ -1,0 +1,162 @@
+{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+
+{% block title %}
+List Users
+{% endblock %}
+
+{% block meta_data %}
+<meta name="title" content="Dashboard Admin"/>
+<meta name="author" content="javad"/>
+<meta name="description" content="Dashboard Admin 30 example pages using Vanilla js."/>
+<meta name="keywords" content="dashboard,adminlte"/>
+{% endblock %}
+
+{% block app-content %}
+
+<div class="card m-2">
+    <div class="card-footer">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="input-group gap-2">
+                <input type="text" name="message"
+                       placeholder="Type Mobile,Username,Email,Name..."
+                       class="form-control"
+                       aria-label="Type Message ...">
+
+                <span class="input-group-append">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </span>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">List category</h3>
+
+        <div class="card-tools">
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
+                <i data-lte-icon="expand" class="bi bi-plus-lg"></i>
+                <i data-lte-icon="collapse" class="bi bi-dash-lg"></i>
+            </button>
+
+            <button type="button" class="btn btn-tool" data-lte-toggle="card-remove">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table m-0">
+
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Slug</th>
+                    <th>Image</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for item in products %}
+                <tr>
+                    <td>{{ item.id }}</td>
+
+                    <td>{{ item.name }}</td>
+
+                    <td>{{ item.category.name }}</td>
+
+                    <td>{{ item.price }}</td>
+
+                    <td>{{ item.stock }}</td>
+
+                    <td>
+                        <span class="badge text-bg-success">
+                            {{ item.slug }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {% if item.image %}
+                        <a href="{{ item.image.url }}" target="_blank">ShowPic</a>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ item.description|truncatechars:30 }}</td>
+
+                    <td>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-primary"
+                               href="{% url 'admin_dashboard:product_edit' item.id %}">
+                                Edit
+                            </a>
+
+                            <a class="btn btn-outline-danger"
+                               href="{% url 'admin_dashboard:product_delete' item.id %}">
+                                Delete
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="card-footer clearfix">
+        <div class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Previous</span>
+                </li>
+                {% endif %}
+
+                {% for num in paginator.page_range %}
+                {% if page_obj.number == num %}
+                <li class="page-item active">
+                    <span class="page-link">{{ num }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">Next</span>
+                </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

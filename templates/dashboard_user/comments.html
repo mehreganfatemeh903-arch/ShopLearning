@@ -1,0 +1,55 @@
+{% extends 'dashboard_user/base/base_dashboard_user.html' %}
+
+{% block app-content %}
+<div class="card">
+    <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+        <h3 class="card-title mb-0">
+            <i class="bi bi-chat-dots-fill me-2"></i>My Comments
+        </h3>
+        <span class="badge bg-white text-dark">{{ comments|length }} Total</span>
+    </div>
+    <div class="card-body p-0">
+        <table class="table table-hover m-0">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Product</th>
+                    <th>Comment</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for comment in comments %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <strong>{{ comment.product.name }}</strong>
+                    </td>
+                    <td>{{ comment.text|truncatechars:60 }}</td>
+                    <td>
+                        {% if comment.is_approved %}
+                            <span class="badge text-bg-success">
+                                <i class="bi bi-check-circle me-1"></i>Approved
+                            </span>
+                        {% else %}
+                            <span class="badge text-bg-warning">
+                                <i class="bi bi-clock me-1"></i>Pending
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>{{ comment.created_at|date:"Y/m/d" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">
+                        <i class="bi bi-chat-slash fs-3 d-block mb-2"></i>
+                        No comments yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

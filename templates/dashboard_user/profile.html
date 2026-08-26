@@ -1,0 +1,109 @@
+{% extends 'dashboard_user/base/base_dashboard_user.html' %}
+
+{% block title %}Dashboard User{% endblock %}
+
+{% block app-content %}
+<div class="col-md-12">
+
+    <!-- Profile Form -->
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">User Information Form</h3>
+        </div>
+        <form method="post" action="{% url 'profile_user_show' %}">
+            {% csrf_token %}
+            <div class="card-body">
+
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text"
+                           value="{{ forms.first_name.value|default_if_none:'' }}"
+                           name="first_name"
+                           class="form-control"
+                           id="firstName"
+                           placeholder="Enter first name">
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text"
+                           value="{{ forms.last_name.value|default_if_none:'' }}"
+                           name="last_name"
+                           class="form-control"
+                           id="lastName"
+                           placeholder="Enter last name">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email"
+                           value="{{ forms.email.value|default_if_none:'' }}"
+                           name="email"
+                           class="form-control"
+                           id="email"
+                           placeholder="Enter email">
+                </div>
+
+                <div class="form-group">
+                    <label for="mobile">Mobile Number</label>
+                    <input type="tel"
+                           value="{{ forms.phone_number.value|default_if_none:'' }}"
+                           name="phone_number"
+                           class="form-control"
+                           id="mobile"
+                           placeholder="Enter mobile number">
+                </div>
+
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Change Password Form -->
+    <div class="card card-secondary m-4">
+        <div class="card-header">
+            <h3 class="card-title">Change Password</h3>
+        </div>
+        <form method="post" action="{% url 'change_profile_password' %}">
+            {% csrf_token %}
+            <div class="card-body">
+
+                {% if password_error %}
+                <div class="alert alert-danger">{{ password_error }}</div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password"
+                           class="form-control"
+                           name="new_password"
+                           id="newPassword"
+                           placeholder="Enter new password">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password"
+                           class="form-control"
+                           name="confirm_password"
+                           id="confirmPassword"
+                           placeholder="Confirm new password">
+                </div>
+
+            </div>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-success">Apply Changes</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
