@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /admin_dashboard/
+Disallow: /user_dashboard/
+Disallow: /payment/
+
+Sitemap: http://127.0.0.1:8000/sitemap.xml

@@ -3,7 +3,29 @@
 {% load humanize %}
 {% load custom_filters_store %}
 
-{% block title %}Product Detail{% endblock %}
+{% block title %}{{ product.name }} | ShopLearning{% endblock %}
+
+{% block meta_description %}
+{{ product.description|striptags|truncatechars:160 }}
+{% endblock %}
+
+{% block og_title %}
+{{ product.name }} | ShopLearning
+{% endblock %}
+
+{% block og_description %}
+{{ product.description|striptags|truncatechars:160 }}
+{% endblock %}
+
+{% block og_type %}product{% endblock %}
+
+{% block twitter_title %}
+{{ product.name }} | ShopLearning
+{% endblock %}
+
+{% block twitter_description %}
+{{ product.description|striptags|truncatechars:160 }}
+{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
