@@ -4,18 +4,22 @@ Django settings for Myproject project.
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # ================= BASE DIR =================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load environment variables
+load_dotenv(BASE_DIR / '.env')
+
 # ================= SECURITY =================
 
-SECRET_KEY = 'django-insecure-zl3ft!%!c2nkfebyap#&0-)mx7(9kb!$0yar8lz^qnd^wxb143'
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [host.strip() for host in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if host.strip()]
 
 # ================= AUTH USER =================
 
@@ -164,5 +168,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 SANDBOX = True
 
-MERCHANT = "8d308834-12ec-459d-a228-92fbcc6968d2"
-
+MERCHANT = os.getenv('MERCHANT', '')
