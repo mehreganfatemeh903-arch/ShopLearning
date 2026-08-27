@@ -32,3 +32,6 @@ media/*
 
 # Local settings backup
 Myproject/settings.py.backup
+
+# Production settings backup
+Myproject/settings.py.production-backup
