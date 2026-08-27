@@ -1,4 +1,4 @@
-{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+﻿{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
 
 {% block title %}List Users{% endblock %}
 
@@ -61,7 +61,7 @@
                                     </span>
 
                                     <span class="badge bg-primary m-1">
-                                        {{ item.created_at }}
+                                        {{ item.created_at|date:"Y-m-d H:i" }}
                                     </span>
 
                                 </button>
@@ -79,7 +79,7 @@
 
                                     <div class="invoice-info mt-2">
                                         <p><strong>Order Number: </strong> {{ item.id }}</p>
-                                        <p><strong>Order Date: </strong> {{ item.created_at }}</p>
+                                        <p><strong>Order Date: </strong> {{ item.created_at|date:"Y-m-d H:i" }}</p>
                                     </div>
 
                                 </div>

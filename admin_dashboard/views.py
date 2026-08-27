@@ -319,20 +319,37 @@ def delete_coupon(request, pk):
 
 @is_super_user_required
 def special_products(request):
-    special_products_list = SpecialProduct.objects.all()
     if request.method == 'POST':
         form = SpecialProductForm(request.POST)
+
         if form.is_valid():
             form.save()
-        else:
-            print(form.errors)
+            messages.success(
+                request,
+                'Special Product added successfully.'
+            )
+            return redirect('admin_dashboard:special_products')
+
+        messages.error(
+            request,
+            'Please correct the errors below.'
+        )
+
     else:
         form = SpecialProductForm()
-    return render(request, 'dashboard_admin/special_products.html', {
-        'special_products': special_products_list,
-        'form': form
-    })
 
+    special_products_list = SpecialProduct.objects.select_related(
+        'product'
+    ).order_by('-id')
+
+    return render(
+        request,
+        'dashboard_admin/special_products.html',
+        {
+            'special_products': special_products_list,
+            'form': form
+        }
+    )
 
 @is_super_user_required
 def special_product_delete(request, pk):

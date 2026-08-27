@@ -73,30 +73,121 @@ Welcome to ShopLearning
 <!-- ================= SPECIAL PRODUCTS ================= -->
 <section class="featured_product py-4">
     <div class="container">
-        <h2 class="text-center mb-4 fw-bold">Our Special Products</h2>
+
+        <h2 class="text-center mb-4 fw-bold">
+            Our Special Products
+        </h2>
+
         <div class="row g-4">
+
             {% for item in specials %}
-            <div class="col-md-4">
-                <div class="card shadow border-0 h-100" style="border-radius:16px;overflow:hidden;">
+
+            <div class="col-12 col-sm-6 col-lg-4">
+
+                <div class="card shadow border-0 h-100"
+                     style="border-radius:16px; overflow:hidden;">
+
+                    <!-- PRODUCT IMAGE -->
                     {% if item.product.image %}
-                    <img src="{{ item.product.image.url }}" class="card-img-top"
-                         style="height:220px;object-fit:cover;" alt="{{ item.product.name }}">
+
+                    <img src="{{ item.product.image.url }}"
+                         class="card-img-top"
+                         style="height:220px; object-fit:cover;"
+                         alt="{{ item.product.name }}">
+
                     {% else %}
-                    <img src="{% static 'images/store.png' %}" class="card-img-top"
-                         style="height:220px;object-fit:cover;" alt="product">
+
+                    <img src="{% static 'images/store.png' %}"
+                         class="card-img-top"
+                         style="height:220px; object-fit:cover;"
+                         alt="{{ item.product.name }}">
+
                     {% endif %}
-                    <div class="card-body text-center">
-                        <h5 class="card-title fw-bold">{{ item.product.name }}</h5>
-                        <p class="text-muted">${{ item.product.price|intcomma }}</p>
-                        <a href="{% url 'store:add_to_cart' item.product.id %}"
-                           class="btn btn-outline-primary rounded-pill">Add To Cart</a>
+
+
+                    <!-- PRODUCT BODY -->
+                    <div class="card-body text-center d-flex flex-column">
+
+                        <h5 class="card-title fw-bold mb-3">
+                            {{ item.product.name }}
+                        </h5>
+
+
+                        <!-- ORIGINAL PRICE -->
+                        <div class="mb-2">
+
+                            <span class="text-muted text-decoration-line-through">
+                                ${{ item.product.price|intcomma }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- DISCOUNT PRICE -->
+                        {% if item.product.discount_price %}
+
+                        <div class="mb-2">
+
+                            <span class="text-danger fw-bold fs-5">
+                                ${{ item.product.discount_price|intcomma }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- DISCOUNT PERCENTAGE -->
+                        <div class="mb-3">
+
+                            <span class="badge bg-danger">
+                                {{ item.product.calculate_discount_percentage|floatformat:0 }}% OFF
+                            </span>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        <!-- SPECIAL PRODUCT STOCK -->
+                        <div class="text-muted small mb-3">
+
+                            Available:
+                            {{ item.quantity|add:"-"|add:item.sold }}
+
+                        </div>
+
+
+                        <!-- ADD TO CART -->
+                        <div class="mt-auto">
+
+                            <a href="{% url 'store:add_to_cart' item.product.id %}"
+                               class="btn btn-outline-primary rounded-pill px-4">
+
+                                Add To Cart
+
+                            </a>
+
+                        </div>
+
                     </div>
+
                 </div>
+
             </div>
+
             {% empty %}
-            <div class="col-12 text-center"><p>No special products found.</p></div>
+
+            <div class="col-12 text-center py-4">
+
+                <p class="text-muted mb-0">
+                    No special products available at the moment.
+                </p>
+
+            </div>
+
             {% endfor %}
+
         </div>
+
     </div>
 </section>
 
@@ -132,40 +223,57 @@ Welcome to ShopLearning
     </div>
 </section>
 
+
 <!-- ================= CATEGORY DISCOUNT ================= -->
 {% if category_discount %}
 <section class="py-4">
     <div class="container">
         <h2 class="text-center mb-4 fw-bold">Special Discounts</h2>
+
         <div class="row g-4">
+
             {% for item in category_discount %}
+
             <div class="col-md-4">
                 <div style="border-radius:16px;overflow:hidden;border:1px solid #eee;box-shadow:0 4px 16px rgba(0,0,0,.07);background:#fff;height:100%;">
+
                     <div style="position:relative;">
-                        {% if item.category.image %}
-                        <img src="{{ item.category.image.url }}"
-                             style="width:100%;height:220px;object-fit:cover;"
-                             alt="{{ item.category.name }}">
+
+                        {% if item.display_product and item.display_product.image %}
+                            <img src="{{ item.display_product.image.url }}"
+                                 style="width:100%;height:220px;object-fit:cover;"
+                                 alt="{{ item.display_product.name }}">
                         {% else %}
-                        <img src="{% static 'images/store.png' %}"
-                             style="width:100%;height:220px;object-fit:cover;" alt="discount">
+                            <img src="{% static 'images/store.png' %}"
+                                 style="width:100%;height:220px;object-fit:cover;"
+                                 alt="{{ item.category.name }}">
                         {% endif %}
+
                         <span style="position:absolute;top:12px;left:12px;background:#e53935;color:#fff;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;">
-                            {{ item.discount_percentage }}% OFF
+                            {{ item.percentage }}% OFF
                         </span>
+
                     </div>
+
                     <div style="padding:16px 20px;text-align:center;">
-                        <h5 style="font-weight:700;margin:0 0 6px;">{{ item.category.name }}</h5>
+
+                        <h5 style="font-weight:700;margin:0 0 6px;">
+                            {{ item.category.name }}
+                        </h5>
+
                         <p style="color:#888;font-size:13px;margin:0;">
                             Special discount on all {{ item.category.name }} products
                         </p>
+
                     </div>
+
                 </div>
             </div>
+
             {% endfor %}
+
         </div>
     </div>
 </section>
 {% endif %}
-
 {% endblock %}

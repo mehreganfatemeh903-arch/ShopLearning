@@ -6,222 +6,698 @@
 
 {% block extra_css %}
 <style>
-.checkout-page { background: #f8f9fa; }
-.shipping-methods { display: flex; flex-direction: column; gap: 12px; }
-.shipping-option { cursor: pointer; }
-.shipping-option input { display: none; }
-.shipping-card { display: flex; justify-content: space-between; align-items: center; padding: 15px 18px; border: 2px solid #eee; border-radius: 14px; transition: all 0.3s ease; background: #fff; }
-.shipping-card h6 { font-weight: 600; margin: 0; }
-.shipping-option input:checked + .shipping-card { border-color: #0d6efd; background: #f0f6ff; box-shadow: 0 6px 15px rgba(13,110,253,0.15); }
-.shipping-card:hover { border-color: #0d6efd; }
-.payment-option { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border: 2px solid #eee; border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s; }
-.payment-option:has(input:checked) { border-color: #0d6efd; background: #f0f6ff; }
-.payment-option:hover { border-color: #0d6efd; }
-.cart-table img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
-.cart-table td, .cart-table th { vertical-align: middle; }
-.sticky-summary { position: sticky; top: 90px; }
-.field-error { color: #dc3545; font-size: 0.82rem; margin-top: 4px; }
-.is-invalid { border-color: #dc3545 !important; }
-@media (max-width: 768px) { .sticky-summary { position: static; } }
+.checkout-page {
+    background: #f8f9fa;
+}
+
+.shipping-methods {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.shipping-option {
+    cursor: pointer;
+}
+
+.shipping-option input {
+    display: none;
+}
+
+.shipping-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 18px;
+    border: 2px solid #eee;
+    border-radius: 14px;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.shipping-card h6 {
+    font-weight: 600;
+    margin: 0;
+}
+
+.shipping-option input:checked + .shipping-card {
+    border-color: #0d6efd;
+    background: #f0f6ff;
+    box-shadow: 0 6px 15px rgba(13,110,253,0.15);
+}
+
+.shipping-card:hover {
+    border-color: #0d6efd;
+}
+
+.payment-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border: 2px solid #eee;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.payment-option:has(input:checked) {
+    border-color: #0d6efd;
+    background: #f0f6ff;
+}
+
+.payment-option:hover {
+    border-color: #0d6efd;
+}
+
+.cart-table img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.cart-table td,
+.cart-table th {
+    vertical-align: middle;
+}
+
+.sticky-summary {
+    position: sticky;
+    top: 90px;
+}
+
+.field-error {
+    color: #dc3545;
+    font-size: 0.82rem;
+    margin-top: 4px;
+}
+
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.stock-warning {
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.stock-warning strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+@media (max-width: 768px) {
+    .sticky-summary {
+        position: static;
+    }
+}
 </style>
 {% endblock %}
 
+
 {% block content %}
 <section class="checkout-page py-5">
-    <div class="container">
-        <h2 class="fw-bold mb-4 text-center">&#128179; Checkout</h2>
 
-        {% if form.non_field_errors %}
-        <div class="alert alert-danger">
-            {% for error in form.non_field_errors %}
-            <p class="mb-0">{{ error }}</p>
+    <div class="container">
+
+        <h2 class="fw-bold mb-4 text-center">
+            &#128179; Checkout
+        </h2>
+
+
+        <!-- ================= DJANGO MESSAGES ================= -->
+
+        {% if messages %}
+            {% for message in messages %}
+
+                <div class="alert
+                    {% if message.tags == 'error' %}
+                        alert-danger
+                    {% elif message.tags == 'success' %}
+                        alert-success
+                    {% elif message.tags == 'warning' %}
+                        alert-warning
+                    {% else %}
+                        alert-info
+                    {% endif %}
+                    alert-dismissible fade show stock-warning"
+                    role="alert">
+
+                    {% if message.tags == 'error' %}
+                        <strong>&#10060; Unable to continue</strong>
+                    {% endif %}
+
+                    {{ message }}
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert">
+                    </button>
+
+                </div>
+
             {% endfor %}
-        </div>
         {% endif %}
 
+
+        <!-- ================= FORM ERRORS ================= -->
+
+        {% if form.non_field_errors %}
+
+            <div class="alert alert-danger stock-warning">
+
+                <strong>&#10060; Please correct the following:</strong>
+
+                {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+
         <form method="POST">
+
             {% csrf_token %}
+
             <div class="row g-4">
+
+
+                <!-- ================= LEFT SIDE ================= -->
 
                 <div class="col-lg-8">
 
-                    <!-- CART ITEMS -->
+
+                    <!-- ================= CART ITEMS ================= -->
+
                     <div class="card shadow-sm border-0 mb-4">
+
                         <div class="card-body">
-                            <h5 class="fw-bold mb-3">&#128722; Cart</h5>
+
+                            <h5 class="fw-bold mb-3">
+                                &#128722; Cart
+                            </h5>
+
                             <div class="table-responsive">
+
                                 <table class="table cart-table">
+
                                     <thead>
+
                                         <tr>
                                             <th>Product</th>
                                             <th>Price</th>
                                             <th>Qty</th>
                                             <th>Subtotal</th>
                                         </tr>
+
                                     </thead>
+
+
                                     <tbody>
+
                                         {% for item in cart_items %}
+
                                         <tr>
+
                                             <td class="d-flex align-items-center gap-2">
+
                                                 {% if item.product.image %}
-                                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}">
+
+                                                    <img src="{{ item.product.image.url }}"
+                                                         alt="{{ item.product.name }}">
+
                                                 {% else %}
-                                                <img src="{% static 'images/store.png' %}" alt="{{ item.product.name }}">
+
+                                                    <img src="{% static 'images/store.png' %}"
+                                                         alt="{{ item.product.name }}">
+
                                                 {% endif %}
-                                                <span>{{ item.product.name }}</span>
+
+                                                <span>
+                                                    {{ item.product.name }}
+                                                </span>
+
                                             </td>
-                                            <td>${{ item.price_item|intcomma }}</td>
-                                            <td>{{ item.quantity }}</td>
-                                            <td>${{ item.price_item|floatformat:0|intcomma }}</td>
+
+
+                                            <td>
+                                                ${{ item.price_item|intcomma }}
+                                            </td>
+
+
+                                            <td>
+                                                {{ item.quantity }}
+                                            </td>
+
+
+                                            <td>
+                                                ${{ item.price_item|floatformat:0|intcomma }}
+                                            </td>
+
                                         </tr>
+
+
                                         {% empty %}
+
                                         <tr>
-                                            <td colspan="4" class="text-center text-muted">Cart is empty.</td>
+
+                                            <td colspan="4"
+                                                class="text-center text-muted">
+
+                                                Cart is empty.
+
+                                            </td>
+
                                         </tr>
+
                                         {% endfor %}
+
                                     </tbody>
+
                                 </table>
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <!-- ADDRESS -->
+
+
+                    <!-- ================= ADDRESS ================= -->
+
                     <div class="card shadow-sm border-0 mb-4">
+
                         <div class="card-body">
-                            <h5 class="fw-bold mb-3">&#128205; Shipping Address</h5>
+
+                            <h5 class="fw-bold mb-3">
+                                &#128205; Shipping Address
+                            </h5>
+
+
                             <div class="row g-3">
 
-                                <div class="col-md-6">
-                                    <label class="form-label">City</label>
-                                    <select name="city" class="form-select form-select-lg {% if form.city.errors %}is-invalid{% endif %}" required>
-                                        <option value="">Select City</option>
-                                        {% for city in form.city.field.queryset %}
-                                        <option value="{{ city.pk }}" {% if form.city.value == city.pk|stringformat:"s" %}selected{% endif %}>{{ city.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                    {% for e in form.city.errors %}
-                                    <div class="field-error">{{ e }}</div>
-                                    {% endfor %}
-                                </div>
+
+                                <!-- CITY -->
 
                                 <div class="col-md-6">
-                                    <label class="form-label">Post Code</label>
-                                    <input type="text" name="post_code" value="{{ form.post_code.value|default:'' }}"
+
+                                    <label class="form-label">
+                                        City
+                                    </label>
+
+                                    <select name="city"
+                                            class="form-select form-select-lg {% if form.city.errors %}is-invalid{% endif %}"
+                                            required>
+
+                                        <option value="">
+                                            Select City
+                                        </option>
+
+                                        {% for city in form.city.field.queryset %}
+
+                                        <option value="{{ city.pk }}"
+                                            {% if form.city.value == city.pk|stringformat:"s" %}
+                                                selected
+                                            {% endif %}>
+
+                                            {{ city.name }}
+
+                                        </option>
+
+                                        {% endfor %}
+
+                                    </select>
+
+
+                                    {% for e in form.city.errors %}
+
+                                        <div class="field-error">
+                                            {{ e }}
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+
+
+                                <!-- POST CODE -->
+
+                                <div class="col-md-6">
+
+                                    <label class="form-label">
+                                        Post Code
+                                    </label>
+
+                                    <input type="text"
+                                           name="post_code"
+                                           value="{{ form.post_code.value|default:'' }}"
                                            class="form-control form-control-lg {% if form.post_code.errors %}is-invalid{% endif %}"
                                            placeholder="Post Code">
+
+
                                     {% for e in form.post_code.errors %}
-                                    <div class="field-error">{{ e }}</div>
+
+                                        <div class="field-error">
+                                            {{ e }}
+                                        </div>
+
                                     {% endfor %}
+
                                 </div>
+
+
+
+                                <!-- ADDRESS -->
 
                                 <div class="col-12">
-                                    <label class="form-label">Full Address</label>
-                                    <textarea name="address_line" rows="3"
+
+                                    <label class="form-label">
+                                        Full Address
+                                    </label>
+
+                                    <textarea name="address_line"
+                                              rows="3"
                                               class="form-control form-control-lg {% if form.address_line.errors %}is-invalid{% endif %}"
                                               placeholder="Street, Alley, Unit...">{{ form.address_line.value|default:'' }}</textarea>
+
+
                                     {% for e in form.address_line.errors %}
-                                    <div class="field-error">{{ e }}</div>
+
+                                        <div class="field-error">
+                                            {{ e }}
+                                        </div>
+
                                     {% endfor %}
+
                                 </div>
 
                             </div>
+
                         </div>
+
                     </div>
 
-                    <!-- SHIPPING METHOD -->
+
+
+                    <!-- ================= SHIPPING METHOD ================= -->
+
                     <div class="card shadow-sm border-0 mb-4">
+
                         <div class="card-body">
-                            <h5 class="fw-bold mb-3">&#128666; Shipping Method</h5>
+
+                            <h5 class="fw-bold mb-3">
+                                &#128666; Shipping Method
+                            </h5>
+
+
                             {% for e in form.shipping_method.errors %}
-                            <div class="field-error mb-2">{{ e }}</div>
+
+                                <div class="field-error mb-2">
+                                    {{ e }}
+                                </div>
+
                             {% endfor %}
+
+
                             <div class="shipping-methods">
+
                                 {% for method in form.shipping_method.field.queryset %}
-                                {% if method.active %}
-                                <label class="shipping-option">
-                                    <input type="radio" name="shipping_method" value="{{ method.pk }}" data-price="{{ method.cost|floatformat:0 }}" {% if forloop.first %}checked{% endif %}>
-                                    <div class="shipping-card">
-                                        <div>
-                                            <h6>{{ method.name }}</h6>
-                                            {% if method.estimate_day %}<small class="text-muted">{{ method.estimate_day }} Days</small>{% endif %}
+
+                                    {% if method.active %}
+
+                                    <label class="shipping-option">
+
+                                        <input type="radio"
+                                               name="shipping_method"
+                                               value="{{ method.pk }}"
+                                               data-price="{{ method.cost|floatformat:0 }}"
+                                               {% if forloop.first %}
+                                                   checked
+                                               {% endif %}>
+
+
+                                        <div class="shipping-card">
+
+                                            <div>
+
+                                                <h6>
+                                                    {{ method.name }}
+                                                </h6>
+
+                                                {% if method.estimate_day %}
+
+                                                    <small class="text-muted">
+                                                        {{ method.estimate_day }} Days
+                                                    </small>
+
+                                                {% endif %}
+
+                                            </div>
+
+
+                                            <span class="fw-bold">
+
+                                                ${{ method.cost|floatformat:0|intcomma }}
+
+                                            </span>
+
                                         </div>
-                                        <span class="fw-bold">${{ method.cost|floatformat:0|intcomma }}</span>
-                                    </div>
-                                </label>
-                                {% endif %}
+
+                                    </label>
+
+                                    {% endif %}
+
                                 {% empty %}
-                                <p class="text-muted">No shipping methods.</p>
+
+                                    <p class="text-muted">
+                                        No shipping methods.
+                                    </p>
+
                                 {% endfor %}
+
                             </div>
+
                         </div>
+
                     </div>
 
-                    <!-- PAYMENT METHOD -->
+
+
+                    <!-- ================= PAYMENT METHOD ================= -->
+
                     <div class="card shadow-sm border-0 mb-4">
+
                         <div class="card-body">
-                            <h5 class="fw-bold mb-3">&#128176; Payment Method</h5>
+
+                            <h5 class="fw-bold mb-3">
+                                &#128176; Payment Method
+                            </h5>
+
+
                             {% for e in form.payment_method.errors %}
-                            <div class="field-error mb-2">{{ e }}</div>
+
+                                <div class="field-error mb-2">
+                                    {{ e }}
+                                </div>
+
                             {% endfor %}
+
+
                             {% for method in form.payment_method.field.queryset %}
-                            <label class="payment-option">
-                                <input type="radio" name="payment_method" value="{{ method.pk }}" {% if forloop.first %}checked{% endif %}>
-                                <span>{{ method.name }}</span>
-                            </label>
+
+                                <label class="payment-option">
+
+                                    <input type="radio"
+                                           name="payment_method"
+                                           value="{{ method.pk }}"
+                                           {% if forloop.first %}
+                                               checked
+                                           {% endif %}>
+
+                                    <span>
+                                        {{ method.name }}
+                                    </span>
+
+                                </label>
+
                             {% empty %}
-                            <p class="text-muted">No payment methods.</p>
+
+                                <p class="text-muted">
+                                    No payment methods.
+                                </p>
+
                             {% endfor %}
+
                         </div>
+
                     </div>
+
 
                 </div>
 
-                <!-- ORDER SUMMARY -->
+
+
+                <!-- ================= RIGHT SIDE ================= -->
+
                 <div class="col-lg-4">
+
                     <div class="card shadow-sm border-0 sticky-summary">
+
                         <div class="card-body">
-                            <h5 class="fw-bold mb-3">&#129534; Order Summary</h5>
+
+                            <h5 class="fw-bold mb-3">
+                                &#129534; Order Summary
+                            </h5>
+
+
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Items ({{ cart_items|length }})</span>
-                                <span>${{ cart_model.get_total_price_cart|intcomma }}</span>
+
+                                <span class="text-muted">
+                                    Items ({{ cart_items|length }})
+                                </span>
+
+                                <span>
+                                    ${{ cart_model.get_total_price_cart|intcomma }}
+                                </span>
+
                             </div>
+
+
                             <div class="d-flex justify-content-between mb-2">
-                                <span class="text-muted">Shipping</span>
-                                <span id="shipping-price">-</span>
+
+                                <span class="text-muted">
+                                    Shipping
+                                </span>
+
+                                <span id="shipping-price">
+                                    -
+                                </span>
+
                             </div>
+
+
                             <hr>
+
+
                             <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
-                                <span>Total</span>
-                                <span class="text-danger" id="final-price">-</span>
+
+                                <span>
+                                    Total
+                                </span>
+
+                                <span class="text-danger"
+                                      id="final-price">
+                                    -
+                                </span>
+
                             </div>
-                            <button type="submit" class="btn btn-success btn-lg w-100">&#10003; Place Order</button>
+
+
+                            <button type="submit"
+                                    class="btn btn-success btn-lg w-100">
+
+                                &#10003; Place Order
+
+                            </button>
+
                         </div>
+
                     </div>
+
                 </div>
+
 
             </div>
+
         </form>
+
     </div>
+
 </section>
+
 {% endblock %}
 
+
+
 {% block extra_js %}
+
 <script>
+
 document.addEventListener('DOMContentLoaded', function () {
-    const basePrice = parseInt('{{ cart_model.get_total_price_cart|default:"0" }}') || 0;
-    const radios = document.querySelectorAll('input[name="shipping_method"]');
-    const shippingEl = document.getElementById('shipping-price');
-    const totalEl = document.getElementById('final-price');
+
+    const basePrice =
+        parseInt(
+            '{{ cart_model.get_total_price_cart|default:"0" }}'
+        ) || 0;
+
+
+    const radios =
+        document.querySelectorAll(
+            'input[name="shipping_method"]'
+        );
+
+
+    const shippingEl =
+        document.getElementById(
+            'shipping-price'
+        );
+
+
+    const totalEl =
+        document.getElementById(
+            'final-price'
+        );
+
 
     function updateTotal() {
+
         let cost = 0;
-        radios.forEach(r => { if (r.checked) cost = parseInt(r.dataset.price) || 0; });
-        shippingEl.innerText = '$' + cost.toLocaleString();
-        totalEl.innerText = '$' + (basePrice + cost).toLocaleString();
+
+
+        radios.forEach(function (radio) {
+
+            if (radio.checked) {
+
+                cost =
+                    parseInt(
+                        radio.dataset.price
+                    ) || 0;
+
+            }
+
+        });
+
+
+        shippingEl.innerText =
+            '$' + cost.toLocaleString();
+
+
+        totalEl.innerText =
+            '$' + (basePrice + cost).toLocaleString();
+
     }
 
-    radios.forEach(r => r.addEventListener('change', updateTotal));
+
+    radios.forEach(function (radio) {
+
+        radio.addEventListener(
+            'change',
+            updateTotal
+        );
+
+    });
+
+
     updateTotal();
+
 });
+
 </script>
+
 {% endblock %}

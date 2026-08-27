@@ -1,4 +1,4 @@
-{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+﻿{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
 {% block app-content %}
 
 <div class="container m-4">
@@ -19,7 +19,7 @@
             <select class="form-control" id="product" name="product">
                 {% for cat in products %}
                 <option value="{{ cat.id }}"
-                        {% if forms.product.value== cat.id %}selected{% endif %}>
+                        {% if forms.product.value == cat.id %}selected{% endif %}>
                     {{ cat.name }}
                 </option>
                 {% endfor %}

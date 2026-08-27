@@ -1,4 +1,4 @@
-{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+﻿{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
 {% load custom_filters_store %}
 {% block title %}
 List orders
@@ -83,7 +83,7 @@ List orders
                     </td>
 
                     <td>
-                        {{ order.created_at }}
+                        {{ order.created_at|date:"Y-m-d H:i" }}
                     </td>
                     <td>
                         {{ order.status|show_status_order }}

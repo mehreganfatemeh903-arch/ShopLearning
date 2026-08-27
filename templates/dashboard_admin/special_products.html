@@ -1,4 +1,4 @@
-{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
+﻿{% extends 'dashboard_admin/base/base_dashboard_admin.html' %}
 
 {% load static %}
 
@@ -12,6 +12,11 @@
         <h2 class="text-center mb-4">Add Special Product</h2>
 
         <form method="POST">
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
             {% csrf_token %}
 
             <div class="mb-3">
@@ -78,8 +83,8 @@
         {% for special_product in special_products %}
         <tr>
             <td>{{ special_product.product.name }}</td>
-            <td>{{ special_product.start_date }}</td>
-            <td>{{ special_product.end_date }}</td>
+            <td>{{ special_product.start_date|date:"Y-m-d H:i" }}</td>
+            <td>{{ special_product.end_date|date:"Y-m-d H:i" }}</td>
             <td>{{ special_product.special_percentage }}</td>
             <td>{{ special_product.quantity }}</td>
             <td>{{ special_product.sold }}</td>
@@ -110,3 +115,5 @@
 </script>
 <script src="{% static 'js/dashboard/admin/special_products.js' %}"></script>
 {% endblock %}
+
+

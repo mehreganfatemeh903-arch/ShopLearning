@@ -1,4 +1,4 @@
-{% extends 'dashboard_user/base/base_dashboard_user.html' %}
+﻿{% extends 'dashboard_user/base/base_dashboard_user.html' %}
 {% load static %}
 {% load custom_filters_admin %}
 
@@ -74,7 +74,7 @@
 
     <div class="order-info">
         <p><strong>Order Number:</strong> {{ order.id }}</p>
-        <p><strong>Order Date:</strong> {{ order.created_at }}</p>
+        <p><strong>Order Date:</strong> {{ order.created_at|date:"Y-m-d H:i" }}</p>
         <p><strong>Billed To:</strong> {{ order.customer.user.email }} - {{ order.customer.user.phone_number }}</p>
         <p><strong>Customer Phone Number:</strong> {{ order.customer.user.phone_number }}</p>
         <p><strong>Customer Address :</strong> {{ order.city.country }} {{ order.city.name }} - {{ order.address_line }}
@@ -136,7 +136,7 @@
                     <span class="badge-invoice">{{ t.payment_method.name }}</span>
                     {% endfor %}
                 </td>
-                <td><span class="badge-date">{{ item.created_at }}</span></td>
+                <td><span class="badge-date">{{ item.created_at|date:"Y-m-d H:i" }}</span></td>
             </tr>
             {% empty %}
             <tr>
@@ -174,3 +174,4 @@
     });
 </script>
 {% endblock %}
+

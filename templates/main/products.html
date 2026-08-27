@@ -1,11 +1,17 @@
 {% extends 'main/base/base_main.html' %}
 
 {% load static %}
+
 {% block title %}Products{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/dashboard/custom_main.css' %}">
+
 <style>
-    .product-card { position: relative; overflow: visible; }
+    .product-card {
+        position: relative;
+        overflow: visible;
+    }
 
     .discount-badge {
         position: absolute;
@@ -51,252 +57,656 @@
         padding: 4px 0;
         user-select: none;
     }
+
     .cat-accordion-header:hover .filter-label {
         color: #1a73e8;
     }
+
     .cat-arrow {
         font-size: 10px;
         color: #888;
         transition: transform .25s ease;
         line-height: 1;
     }
+
     .cat-arrow.open {
         transform: rotate(180deg);
     }
+
     .cat-list {
         list-style: none;
         padding: 0;
         margin: 0;
     }
+
+    .pagination .page-link {
+        min-width: 40px;
+        text-align: center;
+    }
 </style>
 {% endblock %}
+
+
 {% block content %}
+
 <div class="products-page py-4">
+
     <div class="container">
-    <div class="filter-overlay" id="filterOverlay" onclick="closeFilter()"></div>
 
-    <div class="row g-4">
+        <div class="filter-overlay"
+             id="filterOverlay"
+             onclick="closeFilter()">
+        </div>
 
-        <div class="col-lg-3 filter-wrapper" id="filterWrapper">
-            <div class="filter-box">
-                <div class="filter-header">
-                    <span>&#9776;</span>
-                    <h5>Filters</h5>
-                    <button onclick="closeFilter()"
+        <div class="row g-4">
+
+            <!-- ================= FILTER ================= -->
+
+            <div class="col-lg-3 filter-wrapper"
+                 id="filterWrapper">
+
+                <div class="filter-box">
+
+                    <div class="filter-header">
+
+                        <span>&#9776;</span>
+
+                        <h5>Filters</h5>
+
+                        <button
+                            type="button"
+                            onclick="closeFilter()"
                             style="margin-left:auto;background:none;border:none;font-size:18px;cursor:pointer;color:#666;">
-                        &#10005;
-                    </button>
-                </div>
-                <div class="filter-divider"></div>
+                            &#10005;
+                        </button>
 
-                <form method="get" id="filterForm">
-                    {% if request.GET.sort_by %}
-                    <input type="hidden" name="sort_by" value="{{ request.GET.sort_by }}">
-                    {% endif %}
-
-                    <div class="filter-group">
-                        <div class="cat-accordion-header" onclick="toggleCategory()">
-                            <span class="filter-label" style="margin:0;">Category</span>
-                            <span class="cat-arrow" id="catArrow">▼</span>
-                        </div>
-                        <ul class="cat-list" id="categoryList">
-                            <li style="margin-top:4px;">
-                                <a href="?{% if request.GET.sort_by %}sort_by={{ request.GET.sort_by }}&{% endif %}{% if request.GET.min_price %}min_price={{ request.GET.min_price }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}{% endif %}"
-                                   style="display:block;padding:6px 8px;border-radius:7px;font-size:13px;color:#333;text-decoration:none;{% if not request.GET.category %}background:#eef3fc;color:#1a73e8;font-weight:600;{% endif %}">
-                                    All Categories
-                                </a>
-                            </li>
-                            {% for c in categories %}
-                            <li>
-                                <a href="?category={{ c.id }}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}"
-                                   style="display:block;padding:6px 8px;border-radius:7px;font-size:13px;color:#333;text-decoration:none;{% if request.GET.category == c.id|stringformat:'s' %}background:#eef3fc;color:#1a73e8;font-weight:600;{% endif %}">
-                                    {{ c.name }}
-                                </a>
-                            </li>
-                            {% endfor %}
-                        </ul>
                     </div>
 
                     <div class="filter-divider"></div>
 
-                    <div class="filter-group">
-                        <span class="filter-label">Price Range</span>
-                        <div class="price-track">
-                            <div class="price-fill" id="priceFill"></div>
-                            <input type="range" class="range-input" id="rangeMin" name="min_price"
-                                   min="0" max="99999" value="{{ request.GET.min_price|default:0 }}"
-                                   oninput="updateRange()">
-                            <input type="range" class="range-input" id="rangeMax" name="max_price"
-                                   min="0" max="99999" value="{{ request.GET.max_price|default:99999 }}"
-                                   oninput="updateRange()">
-                        </div>
-                        <div class="price-vals">
-                            <span>$<span id="minVal">{{ request.GET.min_price|default:0 }}</span></span>
-                            <span>$<span id="maxVal">{{ request.GET.max_price|default:99999 }}</span></span>
-                        </div>
-                        {% if request.GET.category %}
-                        <input type="hidden" name="category" value="{{ request.GET.category }}">
-                        {% endif %}
-                    </div>
 
-                    <button type="submit" class="btn-apply">Apply Filters</button>
-                    <a href="{% url 'store:products' %}"
-                       style="display:block;text-align:center;margin-top:8px;font-size:12px;color:#888;text-decoration:none;">
-                        Clear all
-                    </a>
-                </form>
-            </div>
-        </div>
+                    <form method="get" id="filterForm">
 
-        <div class="col-12 col-lg-9 ms-lg-auto">
-
-            <div class="sort-bar">
-                <button class="filter-toggle-btn" onclick="openFilter()">
-                    &#9776; Filters
-                </button>
-                <label>Sort by:</label>
-
-                <form method="get" id="sortForm" style="display:contents;">
-                    <input type="hidden" name="category" value="{{ request.GET.category }}">
-                    <input type="hidden" name="min_price" value="{{ request.GET.min_price }}">
-                    <input type="hidden" name="max_price" value="{{ request.GET.max_price }}">
-
-                    <select name="sort_by" onchange="this.form.submit()">
-                        <option value="">Default</option>
-                        <option value="price_asc" {% if request.GET.sort_by == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
-                        <option value="price_desc" {% if request.GET.sort_by == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
-                        <option value="newest" {% if request.GET.sort_by == 'newest' %}selected{% endif %}>Newest</option>
-                    </select>
-                </form>
-
-                {% if request.GET.category or request.GET.min_price or request.GET.max_price %}
-                <a href="{% url 'store:products' %}"
-                   style="margin-left:auto;font-size:12px;color:#888;text-decoration:none;">&#10005; Clear filters</a>
-                {% endif %}
-            </div>
-
-            <div class="row g-3">
-                {% for product in products %}
-                <div class="col-6 col-md-4">
-                    <div class="product-card"
-                         onclick="window.location='{% url 'store:product_detail' product.id %}'"
-                         style="cursor:pointer;">
-
-                        {% if product.discount_price %}
-                        <span class="discount-badge">
-                            %{{ product.calculate_discount_percentage|floatformat:0 }} OFF
-                        </span>
+                        {% if request.GET.sort_by %}
+                        <input
+                            type="hidden"
+                            name="sort_by"
+                            value="{{ request.GET.sort_by }}">
                         {% endif %}
 
-                        {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                        {% else %}
-                        <img src="{% static 'images/store.png' %}" alt="product">
-                        {% endif %}
 
-                        <div class="product-body">
-                            <h6>{{ product.name }}</h6>
+                        <!-- CATEGORY -->
 
-                            {% if product.discount_price %}
-                            <div class="price">
-                                <span class="price-original">{{ product.price }}$</span>
-                                <span class="price-discounted">{{ product.discount_price }}$</span>
+                        <div class="filter-group">
+
+                            <div class="cat-accordion-header"
+                                 onclick="toggleCategory()">
+
+                                <span class="filter-label"
+                                      style="margin:0;">
+                                    Category
+                                </span>
+
+                                <span class="cat-arrow"
+                                      id="catArrow">
+                                    ▼
+                                </span>
+
                             </div>
-                            {% else %}
-                            <div class="price">
-                                <span class="price-normal">{{ product.price }}$</span>
+
+
+                            <ul class="cat-list"
+                                id="categoryList">
+
+                                <li style="margin-top:4px;">
+
+                                    <a
+                                        href="?{% if request.GET.sort_by %}sort_by={{ request.GET.sort_by }}&{% endif %}{% if request.GET.min_price %}min_price={{ request.GET.min_price }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}{% endif %}"
+                                        style="display:block;padding:6px 8px;border-radius:7px;font-size:13px;color:#333;text-decoration:none;{% if not request.GET.category %}background:#eef3fc;color:#1a73e8;font-weight:600;{% endif %}">
+
+                                        All Categories
+
+                                    </a>
+
+                                </li>
+
+
+                                {% for c in categories %}
+
+                                <li>
+
+                                    <a
+                                        href="?category={{ c.id }}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}"
+                                        style="display:block;padding:6px 8px;border-radius:7px;font-size:13px;color:#333;text-decoration:none;{% if request.GET.category == c.id|stringformat:'s' %}background:#eef3fc;color:#1a73e8;font-weight:600;{% endif %}">
+
+                                        {{ c.name }}
+
+                                    </a>
+
+                                </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        </div>
+
+
+                        <div class="filter-divider"></div>
+
+
+                        <!-- PRICE -->
+
+                        <div class="filter-group">
+
+                            <span class="filter-label">
+                                Price Range
+                            </span>
+
+                            <div class="price-track">
+
+                                <div
+                                    class="price-fill"
+                                    id="priceFill">
+                                </div>
+
+                                <input
+                                    type="range"
+                                    class="range-input"
+                                    id="rangeMin"
+                                    name="min_price"
+                                    min="0"
+                                    max="99999"
+                                    value="{{ request.GET.min_price|default:0 }}"
+                                    oninput="updateRange()">
+
+                                <input
+                                    type="range"
+                                    class="range-input"
+                                    id="rangeMax"
+                                    name="max_price"
+                                    min="0"
+                                    max="99999"
+                                    value="{{ request.GET.max_price|default:99999 }}"
+                                    oninput="updateRange()">
+
                             </div>
+
+
+                            <div class="price-vals">
+
+                                <span>
+                                    $<span id="minVal">
+                                        {{ request.GET.min_price|default:0 }}
+                                    </span>
+                                </span>
+
+                                <span>
+                                    $<span id="maxVal">
+                                        {{ request.GET.max_price|default:99999 }}
+                                    </span>
+                                </span>
+
+                            </div>
+
+
+                            {% if request.GET.category %}
+
+                            <input
+                                type="hidden"
+                                name="category"
+                                value="{{ request.GET.category }}">
+
                             {% endif %}
 
-                            <a href="{% url 'store:add_to_cart' product.id %}" class="btn-add">Add to Cart</a>
                         </div>
-                    </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn-apply">
+
+                            Apply Filters
+
+                        </button>
+
+
+                        <a
+                            href="{% url 'store:products' %}"
+                            style="display:block;text-align:center;margin-top:8px;font-size:12px;color:#888;text-decoration:none;">
+
+                            Clear all
+
+                        </a>
+
+                    </form>
+
                 </div>
-                {% empty %}
-                <div class="col-12 text-center py-5">
-                    <p style="color:#888;">No products found.</p>
-                    <a href="{% url 'store:products' %}" class="btn-apply"
-                       style="width:auto;display:inline-block;padding:8px 20px;">Clear Filters</a>
-                </div>
-                {% endfor %}
+
             </div>
 
-            {% if page_obj %}
-            <nav class="mt-4">
-                <ul class="pagination justify-content-center">
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">Previous</a>
-                    </li>
+
+            <!-- ================= PRODUCTS ================= -->
+
+            <div class="col-12 col-lg-9 ms-lg-auto">
+
+
+                <!-- SORT BAR -->
+
+                <div class="sort-bar">
+
+                    <button
+                        type="button"
+                        class="filter-toggle-btn"
+                        onclick="openFilter()">
+
+                        &#9776; Filters
+
+                    </button>
+
+
+                    <label>
+                        Sort by:
+                    </label>
+
+
+                    <form
+                        method="get"
+                        id="sortForm"
+                        style="display:contents;">
+
+                        <input
+                            type="hidden"
+                            name="category"
+                            value="{{ request.GET.category }}">
+
+                        <input
+                            type="hidden"
+                            name="min_price"
+                            value="{{ request.GET.min_price }}">
+
+                        <input
+                            type="hidden"
+                            name="max_price"
+                            value="{{ request.GET.max_price }}">
+
+
+                        <select
+                            name="sort_by"
+                            onchange="this.form.submit()">
+
+                            <option value="">
+                                Default
+                            </option>
+
+                            <option
+                                value="price_asc"
+                                {% if request.GET.sort_by == 'price_asc' %}selected{% endif %}>
+                                Price: Low to High
+                            </option>
+
+                            <option
+                                value="price_desc"
+                                {% if request.GET.sort_by == 'price_desc' %}selected{% endif %}>
+                                Price: High to Low
+                            </option>
+
+                            <option
+                                value="newest"
+                                {% if request.GET.sort_by == 'newest' %}selected{% endif %}>
+                                Newest
+                            </option>
+
+                        </select>
+
+                    </form>
+
+
+                    {% if request.GET.category or request.GET.min_price or request.GET.max_price %}
+
+                    <a
+                        href="{% url 'store:products' %}"
+                        style="margin-left:auto;font-size:12px;color:#888;text-decoration:none;">
+
+                        &#10005; Clear filters
+
+                    </a>
+
                     {% endif %}
-                    <li class="page-item disabled">
-                        <span class="page-link">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-                    </li>
-                    {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="?page={{ page_obj.next_page_number }}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">Next</a>
-                    </li>
-                    {% endif %}
-                </ul>
-            </nav>
-            {% endif %}
+
+                </div>
+
+
+                <!-- PRODUCT LIST -->
+
+                <div class="row g-3">
+
+                    {% for product in products %}
+
+                    <div class="col-6 col-md-4">
+
+                        <div
+                            class="product-card"
+                            onclick="window.location='{% url 'store:product_detail' product.id %}'"
+                            style="cursor:pointer;">
+
+
+                            {% if product.discount_price %}
+
+                            <span class="discount-badge">
+
+                                %{{ product.calculate_discount_percentage|floatformat:0 }} OFF
+
+                            </span>
+
+                            {% endif %}
+
+
+                            {% if product.image %}
+
+                            <img
+                                src="{{ product.image.url }}"
+                                alt="{{ product.name }}">
+
+                            {% else %}
+
+                            <img
+                                src="{% static 'images/store.png' %}"
+                                alt="product">
+
+                            {% endif %}
+
+
+                            <div class="product-body">
+
+                                <h6>
+                                    {{ product.name }}
+                                </h6>
+
+
+                                {% if product.discount_price %}
+
+                                <div class="price">
+
+                                    <span class="price-original">
+                                        {{ product.price }}$
+                                    </span>
+
+                                    <span class="price-discounted">
+                                        {{ product.discount_price }}$
+                                    </span>
+
+                                </div>
+
+                                {% else %}
+
+                                <div class="price">
+
+                                    <span class="price-normal">
+                                        {{ product.price }}$
+                                    </span>
+
+                                </div>
+
+                                {% endif %}
+
+
+                                <a
+                                    href="{% url 'store:add_to_cart' product.id %}"
+                                    class="btn-add"
+                                    onclick="event.stopPropagation();">
+
+                                    Add to Cart
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% empty %}
+
+                    <div class="col-12 text-center py-5">
+
+                        <p style="color:#888;">
+                            No products found.
+                        </p>
+
+                        <a
+                            href="{% url 'store:products' %}"
+                            class="btn-apply"
+                            style="width:auto;display:inline-block;padding:8px 20px;">
+
+                            Clear Filters
+
+                        </a>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <!-- ================= PAGINATION ================= -->
+
+                {% if page_obj and page_obj.paginator.num_pages > 1 %}
+
+                <nav
+                    class="mt-4"
+                    aria-label="Products pagination">
+
+                    <ul class="pagination justify-content-center flex-wrap">
+
+
+                        <!-- PREVIOUS -->
+
+                        {% if page_obj.has_previous %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?page={{ page_obj.previous_page_number }}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+
+                                Previous
+
+                            </a>
+
+                        </li>
+
+                        {% endif %}
+
+
+                        <!-- PAGE NUMBERS -->
+
+                        {% for num in page_obj.paginator.page_range %}
+
+                            {% if num == page_obj.number %}
+
+                            <li class="page-item active">
+
+                                <span class="page-link">
+                                    {{ num }}
+                                </span>
+
+                            </li>
+
+                            {% else %}
+
+                            <li class="page-item">
+
+                                <a
+                                    class="page-link"
+                                    href="?page={{ num }}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+
+                                    {{ num }}
+
+                                </a>
+
+                            </li>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+
+                        <!-- NEXT -->
+
+                        {% if page_obj.has_next %}
+
+                        <li class="page-item">
+
+                            <a
+                                class="page-link"
+                                href="?page={{ page_obj.next_page_number }}{% if request.GET.sort_by %}&sort_by={{ request.GET.sort_by }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.min_price %}&min_price={{ request.GET.min_price }}{% endif %}{% if request.GET.max_price %}&max_price={{ request.GET.max_price }}{% endif %}">
+
+                                Next
+
+                            </a>
+
+                        </li>
+
+                        {% endif %}
+
+
+                    </ul>
+
+                </nav>
+
+                {% endif %}
+
+            </div>
 
         </div>
+
     </div>
+
 </div>
 
+
 <script>
-    function openFilter() {
-        document.getElementById('filterWrapper').classList.add('active');
-        document.getElementById('filterOverlay').classList.add('active');
-        document.body.style.overflow = 'hidden';
+
+function openFilter() {
+
+    document
+        .getElementById('filterWrapper')
+        .classList.add('active');
+
+    document
+        .getElementById('filterOverlay')
+        .classList.add('active');
+
+    document.body.style.overflow = 'hidden';
+}
+
+
+function closeFilter() {
+
+    document
+        .getElementById('filterWrapper')
+        .classList.remove('active');
+
+    document
+        .getElementById('filterOverlay')
+        .classList.remove('active');
+
+    document.body.style.overflow = '';
+}
+
+
+function updateRange() {
+
+    var minInput =
+        document.getElementById('rangeMin');
+
+    var maxInput =
+        document.getElementById('rangeMax');
+
+    var min =
+        parseInt(minInput.value);
+
+    var max =
+        parseInt(maxInput.value);
+
+
+    if (min > max) {
+
+        minInput.value = max;
+        maxInput.value = min;
+
+        min =
+            parseInt(minInput.value);
+
+        max =
+            parseInt(maxInput.value);
     }
 
-    function closeFilter() {
-        document.getElementById('filterWrapper').classList.remove('active');
-        document.getElementById('filterOverlay').classList.remove('active');
-        document.body.style.overflow = '';
-    }
 
-    function updateRange() {
-        var minInput = document.getElementById('rangeMin');
-        var maxInput = document.getElementById('rangeMax');
-        var min = parseInt(minInput.value);
-        var max = parseInt(maxInput.value);
+    document.getElementById('minVal').textContent =
+        min;
 
-        if (min > max) {
-            minInput.value = max;
-            maxInput.value = min;
-            min = parseInt(minInput.value);
-            max = parseInt(maxInput.value);
-        }
+    document.getElementById('maxVal').textContent =
+        max;
 
-        document.getElementById('minVal').textContent = min;
-        document.getElementById('maxVal').textContent = max;
 
-        var pct1 = (min / 99999) * 100;
-        var pct2 = (max / 99999) * 100;
-        document.getElementById('priceFill').style.left = pct1 + '%';
-        document.getElementById('priceFill').style.width = (pct2 - pct1) + '%';
-    }
+    var pct1 =
+        (min / 99999) * 100;
 
-    function toggleCategory() {
-        var list = document.getElementById('categoryList');
-        var arrow = document.getElementById('catArrow');
-        list.classList.toggle('open');
-        arrow.classList.toggle('open');
-    }
+    var pct2 =
+        (max / 99999) * 100;
 
-    document.addEventListener('DOMContentLoaded', function () {
+
+    document.getElementById('priceFill').style.left =
+        pct1 + '%';
+
+    document.getElementById('priceFill').style.width =
+        (pct2 - pct1) + '%';
+}
+
+
+function toggleCategory() {
+
+    var list =
+        document.getElementById('categoryList');
+
+    var arrow =
+        document.getElementById('catArrow');
+
+    list.classList.toggle('open');
+
+    arrow.classList.toggle('open');
+}
+
+
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
+
         updateRange();
 
-        var hasCat = "{{ request.GET.category }}";
+
+        var hasCat =
+            "{{ request.GET.category }}";
+
+
         if (hasCat) {
-            document.getElementById('categoryList').classList.add('open');
-            document.getElementById('catArrow').classList.add('open');
+
+            document
+                .getElementById('categoryList')
+                .classList.add('open');
+
+            document
+                .getElementById('catArrow')
+                .classList.add('open');
+
         }
-    });
+
+    }
+);
+
 </script>
-{% endblock %}
+
+{% endblock %}
