@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
 
@@ -164,3 +165,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 SANDBOX = True
 
 MERCHANT = "8d308834-12ec-459d-a228-92fbcc6968d2"
+
