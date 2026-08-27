@@ -29,3 +29,6 @@ Thumbs.db
 # Media uploaded by users
 media/*
 !media/.gitkeep
+
+# Local settings backup
+Myproject/settings.py.backup
