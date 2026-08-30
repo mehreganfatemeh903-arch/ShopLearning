@@ -1,4 +1,4 @@
-﻿# ShopLearning 🛒
+# ShopLearning 🛒
 
 A production-ready Django e-commerce web application built with Python and Django, featuring authentication, product management, shopping cart, checkout, payment integration, invoice generation, admin and user dashboards, and SEO configuration.
 
