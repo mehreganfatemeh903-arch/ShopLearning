@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+﻿from django.http import HttpResponse
 
 
 def robots_txt(request):
@@ -10,6 +10,6 @@ Disallow: /admin_dashboard/
 Disallow: /user_dashboard/
 Disallow: /payment/
 
-Sitemap: http://127.0.0.1:8000/sitemap.xml
+Sitemap: https://shoplearning-production.up.railway.app/sitemap.xml
 """
     return HttpResponse(content, content_type="text/plain")
