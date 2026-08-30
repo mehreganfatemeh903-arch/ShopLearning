@@ -14,19 +14,19 @@ A production-ready Django e-commerce web application built with Python and Djang
 
 The project covers the complete customer journey, from browsing products and adding items to the shopping cart to checkout, online payment, order management, invoice generation, and invoice printing.
 
-It also includes separate user and admin dashboards, product and category management, discounts and coupons, customer address management, authentication, payment processing, and SEO configuration.
+It also includes separate user and admin dashboards, product and category management, discounts and coupons, customer address management, authentication, payment management, SEO configuration, and production deployment.
 
-### 🎯 Project Goals
+### Project Goals
 
 - Build a complete real-world e-commerce application with Django
 - Implement a complete shopping and payment workflow
 - Provide separate dashboards for users and administrators
 - Implement secure authentication and order management
 - Support invoice generation and printing
-- Apply SEO best practices including `robots.txt` and XML sitemap
+- Apply SEO best practices including robots.txt and XML sitemap
 - Deploy the application in a production environment
 
-### 🛠️ Technical Highlights
+### Technical Highlights
 
 - Django-based backend architecture
 - SQLite database
@@ -35,11 +35,9 @@ It also includes separate user and admin dashboards, product and category manage
 - ZarinPal payment integration
 - Discount and coupon management
 - Automated sitemap and robots configuration
-- Railway production deployment
 - Static and media file configuration
+- Railway production deployment
 - Django automated tests
-
----
 ## 🚀 Project Overview
 
 ShopLearning is a full-featured e-commerce platform developed with Django.
