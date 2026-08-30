@@ -170,3 +170,14 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 SANDBOX = True
 
 MERCHANT = os.getenv('MERCHANT', '')
+
+# ================= PRODUCTION / RAILWAY =================
+
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'shoplearning-production.up.railway.app',
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
