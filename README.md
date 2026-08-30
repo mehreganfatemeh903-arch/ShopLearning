@@ -300,19 +300,29 @@ Private sections such as admin, dashboard, and payment routes are excluded from 
 
 ## 📸 Screenshots
 
-Add project screenshots here to showcase the application:
+### 🏠 Home Page
+![ShopLearning Home](screenshots/home.png)
 
-* Home page
-* Product page
-* Shopping cart
-* Checkout
-* User dashboard
-* Admin dashboard
-* Order details
-* Invoice
+### 🛍️ Products
+![Products](screenshots/products.png)
 
----
+### 📦 Product Details
+![Product Details](screenshots/product-details.png)
 
+### ⭐ Product Reviews
+![Product Reviews](screenshots/reviews.png)
+
+### 🛒 Shopping Cart
+![Shopping Cart](screenshots/cart.png)
+
+### 💳 Checkout
+![Checkout](screenshots/checkout.png)
+
+### ✅ Payment Successful
+![Payment Successful](screenshots/payment-success.png)
+
+### 🧾 Invoice
+![Invoice](screenshots/invoice.png)
 ## 🎯 Future Improvements
 
 Possible future improvements include:
@@ -346,3 +356,4 @@ Interested in Python, Django, Artificial Intelligence, Machine Learning, and Web
 The current production version has been tested end-to-end on Railway.
 
 **Status:** ✅ Stable
+
