@@ -1,5 +1,41 @@
 [
 {
+  "model": "users.personuser",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$haNU0k2qxOG26Zfk9KWn5S$2l3GdUKzuvLk15hObgB9PgwNVimp2rc6W+wj5Wc/kXY=",
+    "last_login": "2026-06-14T10:17:26.692Z",
+    "is_superuser": true,
+    "email": "alex.johson@gmail.com",
+    "first_name": "Alex",
+    "last_name": "johnson",
+    "phone_number": "09123456789",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-02-12T17:42:17.278Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "users.personuser",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$52Z7YyPW6WdWHeMLUpOnoq$22Yx37iEPQdLInkaKDsK6SJ7rL5Ju4x2VQAZrSho+lQ=",
+    "last_login": "2026-08-27T12:36:23.000Z",
+    "is_superuser": true,
+    "email": "ali@gmail.com",
+    "first_name": "ali",
+    "last_name": "ahmadi",
+    "phone_number": "09121234567",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-02-12T18:33:33.136Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
   "model": "store.customer",
   "pk": 1,
   "fields": {
