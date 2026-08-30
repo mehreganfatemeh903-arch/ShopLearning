@@ -4486,4 +4486,197 @@
   "model": "store.bannermain",
   "pk": 5,
   "fields": {
-    "title": 
+    "title": "Élite Store - Luxury Cover 2026",
+    "description": "Premium collection with timeless elegance and fast",
+    "picture": "banners/elite_banner.png",
+    "is_cover": true,
+    "is_active": true,
+    "order": 0
+  }
+},
+{
+  "model": "store.bannermain",
+  "pk": 6,
+  "fields": {
+    "title": "banner_summer_sale",
+    "description": "Summer Sale 70% OFF",
+    "picture": "banners/banner_summer_sale.png",
+    "is_cover": false,
+    "is_active": true,
+    "order": 0
+  }
+},
+{
+  "model": "store.bannermain",
+  "pk": 7,
+  "fields": {
+    "title": "banner_new_arrivals",
+    "description": "New Arrivals 500+ items",
+    "picture": "banners/banner_new_arrivals.png",
+    "is_cover": false,
+    "is_active": true,
+    "order": 0
+  }
+},
+{
+  "model": "store.bannermain",
+  "pk": 8,
+  "fields": {
+    "title": "banner_flash_sale",
+    "description": "Flash Sale",
+    "picture": "banners/banner_flash_sale.png",
+    "is_cover": false,
+    "is_active": true,
+    "order": 0
+  }
+},
+{
+  "model": "store.comment",
+  "pk": 1,
+  "fields": {
+    "user": 1,
+    "product": 16,
+    "text": "Greet Product!",
+    "is_approved": true,
+    "created_at": "2026-06-13T13:46:10.767Z"
+  }
+},
+{
+  "model": "store.comment",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "product": 16,
+    "text": "Great Product!",
+    "is_approved": true,
+    "created_at": "2026-06-13T14:02:49.326Z"
+  }
+},
+{
+  "model": "store.comment",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "product": 12,
+    "text": "Very satisfied!",
+    "is_approved": true,
+    "created_at": "2026-06-13T14:15:25.328Z"
+  }
+},
+{
+  "model": "store.comment",
+  "pk": 4,
+  "fields": {
+    "user": 1,
+    "product": 15,
+    "text": "Great Product",
+    "is_approved": true,
+    "created_at": "2026-06-14T09:02:14.671Z"
+  }
+},
+{
+  "model": "store.comment",
+  "pk": 5,
+  "fields": {
+    "user": 1,
+    "product": 12,
+    "text": "Great Product!",
+    "is_approved": true,
+    "created_at": "2026-06-14T09:49:11.884Z"
+  }
+},
+{
+  "model": "store.comment",
+  "pk": 6,
+  "fields": {
+    "user": 1,
+    "product": 11,
+    "text": "Great Product!",
+    "is_approved": true,
+    "created_at": "2026-06-14T10:09:24.362Z"
+  }
+},
+{
+  "model": "store.comment",
+  "pk": 7,
+  "fields": {
+    "user": 1,
+    "product": 7,
+    "text": "Great Product!",
+    "is_approved": true,
+    "created_at": "2026-06-19T15:28:57.798Z"
+  }
+},
+{
+  "model": "store.comment",
+  "pk": 8,
+  "fields": {
+    "user": 2,
+    "product": 16,
+    "text": "Very good product and excellent quality.",
+    "is_approved": true,
+    "created_at": "2026-08-27T10:45:14.000Z"
+  }
+},
+{
+  "model": "store.comment",
+  "pk": 9,
+  "fields": {
+    "user": 2,
+    "product": 8,
+    "text": "Very good product and excellent quality.",
+    "is_approved": true,
+    "created_at": "2026-08-27T10:50:02.670Z"
+  }
+},
+{
+  "model": "store.comment",
+  "pk": 10,
+  "fields": {
+    "user": 2,
+    "product": 17,
+    "text": "Very good product and excellent quality. I am satisfied with my purchase.",
+    "is_approved": false,
+    "created_at": "2026-08-27T12:38:34.879Z"
+  }
+},
+{
+  "model": "store.address",
+  "pk": 1,
+  "fields": {
+    "user": 2,
+    "title": "home",
+    "province": "Tehran",
+    "city": "Tehran",
+    "street": "Valiasr Street,Bahar Alley,No 12,Unit 3",
+    "postal_code": "1234567890",
+    "is_default": true
+  }
+},
+{
+  "model": "store.address",
+  "pk": 2,
+  "fields": {
+    "user": 1,
+    "title": "Home",
+    "province": "Tehran",
+    "city": "Tehran",
+    "street": "Tehran Mehr Street, Apt 4B",
+    "postal_code": "900123456",
+    "is_default": false
+  }
+},
+{
+  "model": "store.address",
+  "pk": 3,
+  "fields": {
+    "user": 1,
+    "title": "Home",
+    "province": "california",
+    "city": "los Angelse",
+    "street": "123 Sunset Blvd,Apt4B,nEAR Central Park",
+    "postal_code": "9001234567",
+    "is_default": true
+  }
+}
+]
